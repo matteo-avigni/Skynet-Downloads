@@ -4,6 +4,8 @@ Use the hosted download page for versioned Windows packages and bundled Hamlib d
 
 - [Skynet Downloads](https://matteo-avigni.github.io/Skynet-Downloads/)
 
+The hosted page links directly to package files and does not link to the GitHub Releases listing.
+
 Latest direct downloads:
 
 - [Windows installer (MSI)](https://github.com/matteo-avigni/Skynet-Downloads/releases/latest/download/skynet-win-x64.msi)
