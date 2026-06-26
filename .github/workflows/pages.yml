@@ -34,6 +34,7 @@ jobs:
           mkdir _site
           cp index.html _site/
           cp .nojekyll _site/
+          cp -R assets _site/
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
