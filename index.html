@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Skynet Downloads</title>
-    <meta name="description" content="Download versioned Skynet Windows installers and portable ZIP builds.">
+    <meta name="description" content="Download the current Skynet Windows installer and portable ZIP package.">
     <style>
       :root {
         color-scheme: dark;
@@ -16,9 +16,7 @@
         --quiet: #85907c;
         --accent: #22c55e;
         --accent-strong: #16a34a;
-        --warm: #f5c451;
         --border: #344233;
-        --row: #141a15;
       }
 
       * {
@@ -33,12 +31,8 @@
         color: var(--text);
       }
 
-      a {
-        color: inherit;
-      }
-
       main {
-        width: min(100%, 1180px);
+        width: min(100%, 980px);
         margin: 0 auto;
         padding: 40px 20px 56px;
       }
@@ -84,6 +78,32 @@
         line-height: 1.55;
       }
 
+      .panel {
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: var(--surface);
+        padding: 24px;
+      }
+
+      .panel-header {
+        display: flex;
+        gap: 16px;
+        align-items: baseline;
+        justify-content: space-between;
+      }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        min-height: 28px;
+        padding: 4px 10px;
+        border: 1px solid var(--accent-strong);
+        border-radius: 999px;
+        color: var(--accent);
+        font-size: 13px;
+        font-weight: 700;
+      }
+
       .release-strip {
         display: grid;
         grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -94,7 +114,7 @@
       .release-stat {
         border: 1px solid var(--border);
         border-radius: 8px;
-        background: var(--surface);
+        background: var(--surface-strong);
         padding: 16px;
       }
 
@@ -111,33 +131,6 @@
         display: block;
         margin-top: 8px;
         font-size: 18px;
-        font-weight: 700;
-      }
-
-      .latest {
-        border: 1px solid var(--border);
-        border-radius: 8px;
-        background: var(--surface);
-        padding: 24px;
-      }
-
-      .latest-header,
-      .section-header {
-        display: flex;
-        gap: 16px;
-        align-items: baseline;
-        justify-content: space-between;
-      }
-
-      .badge {
-        display: inline-flex;
-        align-items: center;
-        min-height: 28px;
-        padding: 4px 10px;
-        border: 1px solid var(--accent-strong);
-        border-radius: 999px;
-        color: var(--accent);
-        font-size: 13px;
         font-weight: 700;
       }
 
@@ -188,65 +181,8 @@
         white-space: nowrap;
       }
 
-      .archive {
-        margin-top: 28px;
-      }
-
-      .section-header {
-        margin-bottom: 14px;
-      }
-
-      .version-list {
-        overflow: hidden;
-        border: 1px solid var(--border);
-        border-radius: 8px;
-      }
-
-      .version-row {
-        display: grid;
-        grid-template-columns: minmax(132px, 0.9fr) minmax(160px, 1fr) minmax(150px, 0.9fr) minmax(240px, 1.2fr);
-        gap: 16px;
-        align-items: center;
-        padding: 16px 18px;
-        background: var(--row);
-        border-top: 1px solid var(--border);
-      }
-
-      .version-row:first-child {
-        border-top: 0;
-      }
-
-      .version-row.header {
-        background: var(--surface-strong);
-        color: var(--quiet);
-        font-size: 12px;
-        font-weight: 700;
-        letter-spacing: 0;
-        text-transform: uppercase;
-      }
-
-      .version-title {
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-      }
-
-      .version-title strong {
-        font-size: 16px;
-      }
-
-      .version-title span,
-      .version-date,
-      .bundle-version {
-        color: var(--muted);
-        font-size: 14px;
-      }
-
-      .bundle-version strong {
-        color: var(--text);
-      }
-
-      .packages {
+      .files {
+        margin-top: 18px;
         display: flex;
         flex-wrap: wrap;
         gap: 8px;
@@ -259,18 +195,13 @@
         padding: 7px 10px;
         border: 1px solid var(--border);
         border-radius: 8px;
-        color: var(--text);
+        color: var(--muted);
         font-size: 13px;
         font-weight: 700;
         text-decoration: none;
       }
 
-      .package-link.checksum {
-        color: var(--muted);
-        font-weight: 600;
-      }
-
-      @media (max-width: 860px) {
+      @media (max-width: 760px) {
         main {
           padding-top: 24px;
         }
@@ -293,13 +224,9 @@
           grid-template-columns: 1fr;
         }
 
-        .version-row {
-          grid-template-columns: 1fr;
-          gap: 8px;
-        }
-
-        .version-row.header {
-          display: none;
+        .panel-header {
+          align-items: flex-start;
+          flex-direction: column;
         }
       }
     </style>
@@ -309,21 +236,21 @@
       <header class="masthead">
         <div>
           <h1>Skynet Downloads</h1>
-          <p class="lede">Versioned Windows installers and portable packages for Skynet. Current Windows packages include the bundled Hamlib 4.7.1 command-line daemons.</p>
+          <p class="lede">Current Windows package for Skynet. The installer and portable ZIP are hosted directly on this site and include bundled Hamlib 4.7.1 command-line daemons.</p>
         </div>
         <img class="brand-mark" src="assets/skynet-mark-transparent.png" alt="Skynet">
       </header>
 
-      <section class="latest" aria-labelledby="latest-title">
-        <div class="latest-header">
-          <h2 id="latest-title">Latest Release</h2>
+      <section class="panel" aria-labelledby="latest-title">
+        <div class="panel-header">
+          <h2 id="latest-title">Current Release</h2>
           <span class="badge">v0.1.9</span>
         </div>
 
-        <div class="release-strip" aria-label="Latest release details">
+        <div class="release-strip" aria-label="Release details">
           <div class="release-stat">
-            <span class="stat-label">Release tag</span>
-            <span class="stat-value">v0.1.9-7e8f9b6</span>
+            <span class="stat-label">Package</span>
+            <span class="stat-value">v0.1.9</span>
           </div>
           <div class="release-stat">
             <span class="stat-label">Build</span>
@@ -339,213 +266,20 @@
           </div>
         </div>
 
-        <div class="download-grid" aria-label="Latest download links">
-          <a class="download-link primary" href="https://github.com/matteo-avigni/Skynet-Downloads/releases/download/v0.1.9-7e8f9b6/skynet-win-x64.msi">
+        <div class="download-grid" aria-label="Download links">
+          <a class="download-link primary" href="downloads/v0.1.9-7e8f9b6/skynet-win-x64.msi">
             <span class="label">Windows installer</span>
             <span class="meta">MSI</span>
           </a>
-          <a class="download-link" href="https://github.com/matteo-avigni/Skynet-Downloads/releases/download/v0.1.9-7e8f9b6/skynet-win-x64.zip">
+          <a class="download-link" href="downloads/v0.1.9-7e8f9b6/skynet-win-x64.zip">
             <span class="label">Portable app package</span>
             <span class="meta">ZIP</span>
           </a>
         </div>
-      </section>
 
-      <section class="archive" aria-labelledby="archive-title">
-        <div class="section-header">
-          <h2 id="archive-title">Version Archive</h2>
-        </div>
-
-        <div class="version-list">
-          <div class="version-row header" aria-hidden="true">
-            <span>Version</span>
-            <span>Build</span>
-            <span>Bundle</span>
-            <span>Packages</span>
-          </div>
-
-          <div class="version-row">
-            <div class="version-title">
-              <strong>v0.1.9</strong>
-              <span><time datetime="2026-06-23">Jun 23, 2026</time></span>
-            </div>
-            <div class="version-date">v0.1.9-7e8f9b6</div>
-            <div class="bundle-version"><strong>Hamlib 4.7.1</strong></div>
-            <div class="packages">
-              <a class="package-link" href="https://github.com/matteo-avigni/Skynet-Downloads/releases/download/v0.1.9-7e8f9b6/skynet-win-x64.msi">MSI</a>
-              <a class="package-link checksum" href="https://github.com/matteo-avigni/Skynet-Downloads/releases/download/v0.1.9-7e8f9b6/skynet-win-x64.msi.sha256">MSI SHA-256</a>
-              <a class="package-link" href="https://github.com/matteo-avigni/Skynet-Downloads/releases/download/v0.1.9-7e8f9b6/skynet-win-x64.zip">ZIP</a>
-              <a class="package-link checksum" href="https://github.com/matteo-avigni/Skynet-Downloads/releases/download/v0.1.9-7e8f9b6/skynet-win-x64.zip.sha256">ZIP SHA-256</a>
-            </div>
-          </div>
-
-          <div class="version-row">
-            <div class="version-title">
-              <strong>v0.1.8</strong>
-              <span><time datetime="2026-06-22">Jun 22, 2026</time></span>
-            </div>
-            <div class="version-date">v0.1.8-12b652b</div>
-            <div class="bundle-version"><strong>Hamlib 4.7.1</strong></div>
-            <div class="packages">
-              <a class="package-link" href="https://github.com/matteo-avigni/Skynet-Downloads/releases/download/v0.1.8-12b652b/skynet-win-x64.msi">MSI</a>
-              <a class="package-link checksum" href="https://github.com/matteo-avigni/Skynet-Downloads/releases/download/v0.1.8-12b652b/skynet-win-x64.msi.sha256">MSI SHA-256</a>
-              <a class="package-link" href="https://github.com/matteo-avigni/Skynet-Downloads/releases/download/v0.1.8-12b652b/skynet-win-x64.zip">ZIP</a>
-              <a class="package-link checksum" href="https://github.com/matteo-avigni/Skynet-Downloads/releases/download/v0.1.8-12b652b/skynet-win-x64.zip.sha256">ZIP SHA-256</a>
-            </div>
-          </div>
-
-          <div class="version-row">
-            <div class="version-title">
-              <strong>v0.1.7</strong>
-              <span><time datetime="2026-06-22">Jun 22, 2026</time></span>
-            </div>
-            <div class="version-date">v0.1.7-a1930b9</div>
-            <div class="bundle-version"><strong>Hamlib 4.7.1</strong></div>
-            <div class="packages">
-              <a class="package-link" href="https://github.com/matteo-avigni/Skynet-Downloads/releases/download/v0.1.7-a1930b9/skynet-win-x64.msi">MSI</a>
-              <a class="package-link checksum" href="https://github.com/matteo-avigni/Skynet-Downloads/releases/download/v0.1.7-a1930b9/skynet-win-x64.msi.sha256">MSI SHA-256</a>
-              <a class="package-link" href="https://github.com/matteo-avigni/Skynet-Downloads/releases/download/v0.1.7-a1930b9/skynet-win-x64.zip">ZIP</a>
-              <a class="package-link checksum" href="https://github.com/matteo-avigni/Skynet-Downloads/releases/download/v0.1.7-a1930b9/skynet-win-x64.zip.sha256">ZIP SHA-256</a>
-            </div>
-          </div>
-
-          <div class="version-row">
-            <div class="version-title">
-              <strong>v0.1.7</strong>
-              <span><time datetime="2026-06-18">Jun 18, 2026</time></span>
-            </div>
-            <div class="version-date">v0.1.7-bdf028c</div>
-            <div class="bundle-version"><strong>Hamlib 4.7.1</strong></div>
-            <div class="packages">
-              <a class="package-link" href="https://github.com/matteo-avigni/Skynet-Downloads/releases/download/v0.1.7-bdf028c/skynet-win-x64.msi">MSI</a>
-              <a class="package-link checksum" href="https://github.com/matteo-avigni/Skynet-Downloads/releases/download/v0.1.7-bdf028c/skynet-win-x64.msi.sha256">MSI SHA-256</a>
-              <a class="package-link" href="https://github.com/matteo-avigni/Skynet-Downloads/releases/download/v0.1.7-bdf028c/skynet-win-x64.zip">ZIP</a>
-              <a class="package-link checksum" href="https://github.com/matteo-avigni/Skynet-Downloads/releases/download/v0.1.7-bdf028c/skynet-win-x64.zip.sha256">ZIP SHA-256</a>
-            </div>
-          </div>
-
-          <div class="version-row">
-            <div class="version-title">
-              <strong>v0.1.7</strong>
-              <span><time datetime="2026-06-18">Jun 18, 2026</time></span>
-            </div>
-            <div class="version-date">v0.1.7-452c2dc</div>
-            <div class="bundle-version"><strong>Hamlib 4.7.1</strong></div>
-            <div class="packages">
-              <a class="package-link" href="https://github.com/matteo-avigni/Skynet-Downloads/releases/download/v0.1.7-452c2dc/skynet-win-x64.msi">MSI</a>
-              <a class="package-link checksum" href="https://github.com/matteo-avigni/Skynet-Downloads/releases/download/v0.1.7-452c2dc/skynet-win-x64.msi.sha256">MSI SHA-256</a>
-              <a class="package-link" href="https://github.com/matteo-avigni/Skynet-Downloads/releases/download/v0.1.7-452c2dc/skynet-win-x64.zip">ZIP</a>
-              <a class="package-link checksum" href="https://github.com/matteo-avigni/Skynet-Downloads/releases/download/v0.1.7-452c2dc/skynet-win-x64.zip.sha256">ZIP SHA-256</a>
-            </div>
-          </div>
-
-          <div class="version-row">
-            <div class="version-title">
-              <strong>v0.1.7</strong>
-              <span><time datetime="2026-06-09">Jun 9, 2026</time></span>
-            </div>
-            <div class="version-date">v0.1.7-93c4750</div>
-            <div class="bundle-version"><strong>Hamlib 4.7.1</strong></div>
-            <div class="packages">
-              <a class="package-link" href="https://github.com/matteo-avigni/Skynet-Downloads/releases/download/v0.1.7-93c4750/skynet-win-x64.msi">MSI</a>
-              <a class="package-link checksum" href="https://github.com/matteo-avigni/Skynet-Downloads/releases/download/v0.1.7-93c4750/skynet-win-x64.msi.sha256">MSI SHA-256</a>
-              <a class="package-link" href="https://github.com/matteo-avigni/Skynet-Downloads/releases/download/v0.1.7-93c4750/skynet-win-x64.zip">ZIP</a>
-              <a class="package-link checksum" href="https://github.com/matteo-avigni/Skynet-Downloads/releases/download/v0.1.7-93c4750/skynet-win-x64.zip.sha256">ZIP SHA-256</a>
-            </div>
-          </div>
-
-          <div class="version-row">
-            <div class="version-title">
-              <strong>v0.1.7</strong>
-              <span><time datetime="2026-06-09">Jun 9, 2026</time></span>
-            </div>
-            <div class="version-date">v0.1.7</div>
-            <div class="bundle-version"><strong>Hamlib 4.7.1</strong></div>
-            <div class="packages">
-              <a class="package-link" href="https://github.com/matteo-avigni/Skynet-Downloads/releases/download/v0.1.7/skynet-win-x64.msi">MSI</a>
-              <a class="package-link checksum" href="https://github.com/matteo-avigni/Skynet-Downloads/releases/download/v0.1.7/skynet-win-x64.msi.sha256">MSI SHA-256</a>
-              <a class="package-link" href="https://github.com/matteo-avigni/Skynet-Downloads/releases/download/v0.1.7/skynet-win-x64.zip">ZIP</a>
-              <a class="package-link checksum" href="https://github.com/matteo-avigni/Skynet-Downloads/releases/download/v0.1.7/skynet-win-x64.zip.sha256">ZIP SHA-256</a>
-            </div>
-          </div>
-
-          <div class="version-row">
-            <div class="version-title">
-              <strong>v0.1.6</strong>
-              <span><time datetime="2026-06-09">Jun 9, 2026</time></span>
-            </div>
-            <div class="version-date">v0.1.6-1fe5ac9</div>
-            <div class="bundle-version"><strong>Hamlib 4.7.1</strong></div>
-            <div class="packages">
-              <a class="package-link" href="https://github.com/matteo-avigni/Skynet-Downloads/releases/download/v0.1.6-1fe5ac9/skynet-win-x64.msi">MSI</a>
-              <a class="package-link checksum" href="https://github.com/matteo-avigni/Skynet-Downloads/releases/download/v0.1.6-1fe5ac9/skynet-win-x64.msi.sha256">MSI SHA-256</a>
-            </div>
-          </div>
-
-          <div class="version-row">
-            <div class="version-title">
-              <strong>v0.1.5</strong>
-              <span><time datetime="2026-06-09">Jun 9, 2026</time></span>
-            </div>
-            <div class="version-date">v0.1.5-13a7084</div>
-            <div class="bundle-version"><strong>Hamlib 4.7.1</strong></div>
-            <div class="packages">
-              <a class="package-link" href="https://github.com/matteo-avigni/Skynet-Downloads/releases/download/v0.1.5-13a7084/skynet-win-x64.msi">MSI</a>
-              <a class="package-link checksum" href="https://github.com/matteo-avigni/Skynet-Downloads/releases/download/v0.1.5-13a7084/skynet-win-x64.msi.sha256">MSI SHA-256</a>
-            </div>
-          </div>
-
-          <div class="version-row">
-            <div class="version-title">
-              <strong>v0.1.4</strong>
-              <span><time datetime="2026-06-08">Jun 8, 2026</time></span>
-            </div>
-            <div class="version-date">v0.1.4-07bb76d</div>
-            <div class="bundle-version"><strong>Hamlib 4.7.1</strong></div>
-            <div class="packages">
-              <a class="package-link" href="https://github.com/matteo-avigni/Skynet-Downloads/releases/download/v0.1.4-07bb76d/skynet-win-x64.msi">MSI</a>
-              <a class="package-link checksum" href="https://github.com/matteo-avigni/Skynet-Downloads/releases/download/v0.1.4-07bb76d/skynet-win-x64.msi.sha256">MSI SHA-256</a>
-            </div>
-          </div>
-
-          <div class="version-row">
-            <div class="version-title">
-              <strong>v0.1.3</strong>
-              <span><time datetime="2026-06-08">Jun 8, 2026</time></span>
-            </div>
-            <div class="version-date">v0.1.3-b392be9</div>
-            <div class="bundle-version"><strong>Hamlib 4.7.1</strong></div>
-            <div class="packages">
-              <a class="package-link" href="https://github.com/matteo-avigni/Skynet-Downloads/releases/download/v0.1.3-b392be9/skynet-win-x64.msi">MSI</a>
-              <a class="package-link checksum" href="https://github.com/matteo-avigni/Skynet-Downloads/releases/download/v0.1.3-b392be9/skynet-win-x64.msi.sha256">MSI SHA-256</a>
-            </div>
-          </div>
-
-          <div class="version-row">
-            <div class="version-title">
-              <strong>v0.1.2</strong>
-              <span><time datetime="2026-06-07">Jun 7, 2026</time></span>
-            </div>
-            <div class="version-date">v0.1.2-a357a0d</div>
-            <div class="bundle-version"><strong>Hamlib 4.7.1</strong></div>
-            <div class="packages">
-              <a class="package-link" href="https://github.com/matteo-avigni/Skynet-Downloads/releases/download/v0.1.2-a357a0d/skynet-win-x64.msi">MSI</a>
-              <a class="package-link checksum" href="https://github.com/matteo-avigni/Skynet-Downloads/releases/download/v0.1.2-a357a0d/skynet-win-x64.msi.sha256">MSI SHA-256</a>
-            </div>
-          </div>
-
-          <div class="version-row">
-            <div class="version-title">
-              <strong>v0.1.1</strong>
-              <span><time datetime="2026-06-06">Jun 6, 2026</time></span>
-            </div>
-            <div class="version-date">v0.1.1-fa38965</div>
-            <div class="bundle-version"><strong>Hamlib 4.7.1</strong></div>
-            <div class="packages">
-              <a class="package-link" href="https://github.com/matteo-avigni/Skynet-Downloads/releases/download/v0.1.1-fa38965/skynet-win-x64.msi">MSI</a>
-              <a class="package-link checksum" href="https://github.com/matteo-avigni/Skynet-Downloads/releases/download/v0.1.1-fa38965/skynet-win-x64.msi.sha256">MSI SHA-256</a>
-            </div>
-          </div>
+        <div class="files" aria-label="Checksum links">
+          <a class="package-link" href="downloads/v0.1.9-7e8f9b6/skynet-win-x64.msi.sha256">MSI SHA-256</a>
+          <a class="package-link" href="downloads/v0.1.9-7e8f9b6/skynet-win-x64.zip.sha256">ZIP SHA-256</a>
         </div>
       </section>
     </main>
