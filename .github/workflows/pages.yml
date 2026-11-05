@@ -36,6 +36,9 @@ jobs:
           cp .nojekyll _site/
           cp -R assets _site/
           cp -R downloads _site/
+          if [ -d updates ]; then
+            cp -R updates _site/
+          fi
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
