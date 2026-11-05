@@ -1,0 +1,9 @@
+{
+  "version": "0.1.9",
+  "build": "d3deddf",
+  "tag": "v0.1.9-d3deddf",
+  "sourceRevision": "d3deddffe19f64e0228fe616d85de05968a8d8d1",
+  "macos": {
+    "path": "downloads/v0.1.9-d3deddf/skynet-0.1.9-macos-universal.pkg"
+  }
+}

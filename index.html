@@ -227,24 +227,42 @@
           return response.json();
         })
         .then((release) => {
-          if (!release.version || !release.build || !release.windows?.path || !release.macos?.path) {
+          if (!release.version || !release.build) {
             throw new Error("Incomplete installer manifest");
           }
 
           versionElement.textContent = `v${release.version} (${release.build})`;
-          statusElement.textContent = "Both installers passed their platform signing and publication gates.";
+          const windowsAvailable = Boolean(release.windows?.path);
+          const macosAvailable = Boolean(release.macos?.path);
+          if (!windowsAvailable && !macosAvailable) {
+            throw new Error("No installers in manifest");
+          }
+
           const windowsDownload = document.getElementById("windows-download");
-          windowsDownload.href = release.windows.path;
-          windowsDownload.textContent = "Download MSI";
-          windowsDownload.removeAttribute("aria-disabled");
+          if (windowsAvailable) {
+            windowsDownload.href = release.windows.path;
+            windowsDownload.textContent = "Download MSI";
+            windowsDownload.removeAttribute("aria-disabled");
+          }
+
           const macosDownload = document.getElementById("macos-download");
-          macosDownload.href = release.macos.path;
-          macosDownload.textContent = "Download PKG";
-          macosDownload.removeAttribute("aria-disabled");
+          if (macosAvailable) {
+            macosDownload.href = release.macos.path;
+            macosDownload.textContent = "Download PKG";
+            macosDownload.removeAttribute("aria-disabled");
+          }
+
+          if (windowsAvailable && macosAvailable) {
+            statusElement.textContent = "Both installers passed their platform signing and publication gates.";
+          } else if (macosAvailable) {
+            statusElement.textContent = "The signed and notarized macOS installer is available. Windows 11 is pending Azure signing approval.";
+          } else {
+            statusElement.textContent = "The signed Windows installer is available. The macOS installer is pending notarization.";
+          }
         })
         .catch(() => {
           versionElement.textContent = "Publication pending";
-          statusElement.textContent = "A signed Windows installer and notarized macOS installer are not yet available as one verified release.";
+          statusElement.textContent = "No signed installer is currently available.";
         });
     </script>
   </body>
