@@ -147,6 +147,13 @@
         outline-offset: 3px;
       }
 
+      .download[aria-disabled="true"] {
+        border-color: var(--border);
+        background: #2a312e;
+        color: var(--muted);
+        pointer-events: none;
+      }
+
       .policy {
         margin-top: 28px;
         padding-top: 22px;
@@ -155,8 +162,6 @@
         font-size: 14px;
         line-height: 1.6;
       }
-
-      [hidden] { display: none !important; }
 
       @media (max-width: 700px) {
         main {
@@ -194,17 +199,17 @@
         </div>
         <p id="status" class="status" role="status">Loading the current installer manifest.</p>
 
-        <div id="installers" class="installer-grid" hidden>
+        <div id="installers" class="installer-grid">
           <article class="installer">
             <h3>Windows 11</h3>
             <p>Authenticode-signed x64 installation wizard.</p>
-            <a id="windows-download" class="download" href="#">Download MSI</a>
+            <a id="windows-download" class="download" aria-disabled="true">Pending signing</a>
           </article>
 
           <article class="installer">
             <h3>macOS</h3>
             <p>Developer ID signed, notarized universal installer.</p>
-            <a id="macos-download" class="download" href="#">Download PKG</a>
+            <a id="macos-download" class="download" aria-disabled="true">Pending build</a>
           </article>
         </div>
       </section>
@@ -215,7 +220,6 @@
     <script>
       const statusElement = document.getElementById("status");
       const versionElement = document.getElementById("version");
-      const installersElement = document.getElementById("installers");
 
       fetch("downloads/latest.json", { cache: "no-store" })
         .then((response) => {
@@ -229,9 +233,14 @@
 
           versionElement.textContent = `v${release.version} (${release.build})`;
           statusElement.textContent = "Both installers passed their platform signing and publication gates.";
-          document.getElementById("windows-download").href = release.windows.path;
-          document.getElementById("macos-download").href = release.macos.path;
-          installersElement.hidden = false;
+          const windowsDownload = document.getElementById("windows-download");
+          windowsDownload.href = release.windows.path;
+          windowsDownload.textContent = "Download MSI";
+          windowsDownload.removeAttribute("aria-disabled");
+          const macosDownload = document.getElementById("macos-download");
+          macosDownload.href = release.macos.path;
+          macosDownload.textContent = "Download PKG";
+          macosDownload.removeAttribute("aria-disabled");
         })
         .catch(() => {
           versionElement.textContent = "Publication pending";
