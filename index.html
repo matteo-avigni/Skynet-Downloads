@@ -36,16 +36,17 @@
 
       .masthead {
         display: grid;
-        grid-template-columns: minmax(0, 1fr) 104px;
-        gap: 24px;
+        grid-template-columns: minmax(0, 1fr) minmax(300px, 440px);
+        gap: 32px;
         align-items: center;
         padding-bottom: 32px;
         border-bottom: 1px solid var(--border);
       }
 
-      .brand-mark {
-        width: 104px;
-        height: 104px;
+      .brand-lockup {
+        display: block;
+        width: 100%;
+        height: auto;
         object-fit: contain;
       }
 
@@ -86,15 +87,6 @@
         font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
         font-size: 14px;
         font-weight: 700;
-      }
-
-      .status {
-        margin-top: 18px;
-        padding: 15px 17px;
-        border-left: 3px solid var(--blue);
-        background: var(--surface);
-        color: var(--muted);
-        line-height: 1.5;
       }
 
       .installer-grid {
@@ -154,15 +146,6 @@
         pointer-events: none;
       }
 
-      .policy {
-        margin-top: 28px;
-        padding-top: 22px;
-        border-top: 1px solid var(--border);
-        color: var(--muted);
-        font-size: 14px;
-        line-height: 1.6;
-      }
-
       @media (max-width: 700px) {
         main {
           width: min(100% - 24px, 1040px);
@@ -170,12 +153,12 @@
         }
 
         .masthead {
-          grid-template-columns: minmax(0, 1fr) 72px;
+          grid-template-columns: 1fr;
+          gap: 24px;
         }
 
-        .brand-mark {
-          width: 72px;
-          height: 72px;
+        .brand-lockup {
+          width: min(100%, 440px);
         }
 
         .installer-grid { grid-template-columns: 1fr; }
@@ -189,7 +172,7 @@
           <h1>Skynet Installers</h1>
           <p class="lede">Official installation packages for Windows 11 and macOS.</p>
         </div>
-        <img class="brand-mark" src="assets/skynet-mark-transparent.png" alt="Skynet">
+        <img class="brand-lockup" src="assets/skynet-lockup-transparent.png" alt="Skynet Satellite Tracking System">
       </header>
 
       <section class="release" aria-labelledby="release-title">
@@ -197,8 +180,6 @@
           <h2 id="release-title">Current version</h2>
           <span id="version" class="version">Checking availability</span>
         </div>
-        <p id="status" class="status" role="status">Loading the current installer manifest.</p>
-
         <div id="installers" class="installer-grid">
           <article class="installer">
             <h3>Windows 11</h3>
@@ -214,11 +195,9 @@
         </div>
       </section>
 
-      <p class="policy">Installers are hosted directly on this GitHub Pages site. The Skynet application source repository is private, and this project does not use GitHub Releases or publish source archives.</p>
     </main>
 
     <script>
-      const statusElement = document.getElementById("status");
       const versionElement = document.getElementById("version");
 
       fetch("downloads/latest.json", { cache: "no-store" })
@@ -257,21 +236,9 @@
             macosDownload.removeAttribute("aria-disabled");
           }
 
-          if (windowsAvailable && macosAvailable) {
-            statusElement.textContent = windowsSigned
-              ? "Both installers passed their platform signing and publication gates."
-              : "The unsigned Windows 11 installer and signed, notarized macOS installer are available. Windows signing is pending Microsoft approval.";
-          } else if (macosAvailable) {
-            statusElement.textContent = "The signed and notarized macOS installer is available. Windows 11 is pending Azure signing approval.";
-          } else {
-            statusElement.textContent = windowsSigned
-              ? "The signed Windows installer is available. The macOS installer is pending notarization."
-              : "The unsigned Windows installer is available. Windows may show an unknown-publisher warning.";
-          }
         })
         .catch(() => {
           versionElement.textContent = "Publication pending";
-          statusElement.textContent = "No signed installer is currently available.";
         });
     </script>
   </body>
