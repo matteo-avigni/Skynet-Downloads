@@ -1,9 +1,11 @@
 {
-  "version": "0.1.9",
-  "build": "d3deddf",
-  "tag": "v0.1.9-d3deddf",
-  "sourceRevision": "d3deddffe19f64e0228fe616d85de05968a8d8d1",
-  "macos": {
-    "path": "downloads/v0.1.9-d3deddf/skynet-0.1.9-macos-universal.pkg"
+  "version": "0.1.10",
+  "build": "5e7f542",
+  "tag": "v0.1.10-5e7f542",
+  "sourceRevision": "5e7f54270b6744f409d87a21842b542644aebfc3",
+  "publishedUtc": "2026-11-13T10:15:04Z",
+  "windows": {
+    "path": "downloads/v0.1.10-5e7f542/skynet-win-x64.msi",
+    "signed": false
   }
 }
