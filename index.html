@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Skynet Installers</title>
-    <meta name="description" content="Official signed Windows and notarized macOS installers for Skynet.">
+    <meta name="description" content="Official Windows and macOS installers for Skynet.">
     <style>
       :root {
         color-scheme: dark;
@@ -202,8 +202,8 @@
         <div id="installers" class="installer-grid">
           <article class="installer">
             <h3>Windows 11</h3>
-            <p>Authenticode-signed x64 installation wizard.</p>
-            <a id="windows-download" class="download" aria-disabled="true">Pending signing</a>
+            <p id="windows-description">x64 installation wizard.</p>
+            <a id="windows-download" class="download" aria-disabled="true">Pending build</a>
           </article>
 
           <article class="installer">
@@ -239,9 +239,14 @@
           }
 
           const windowsDownload = document.getElementById("windows-download");
+          const windowsDescription = document.getElementById("windows-description");
+          const windowsSigned = release.windows?.signed !== false;
           if (windowsAvailable) {
             windowsDownload.href = release.windows.path;
-            windowsDownload.textContent = "Download MSI";
+            windowsDownload.textContent = windowsSigned ? "Download MSI" : "Download unsigned MSI";
+            windowsDescription.textContent = windowsSigned
+              ? "Authenticode-signed x64 installation wizard."
+              : "Unsigned x64 installation wizard. Windows may show an unknown-publisher warning.";
             windowsDownload.removeAttribute("aria-disabled");
           }
 
@@ -253,11 +258,15 @@
           }
 
           if (windowsAvailable && macosAvailable) {
-            statusElement.textContent = "Both installers passed their platform signing and publication gates.";
+            statusElement.textContent = windowsSigned
+              ? "Both installers passed their platform signing and publication gates."
+              : "The unsigned Windows 11 installer and signed, notarized macOS installer are available. Windows signing is pending Microsoft approval.";
           } else if (macosAvailable) {
             statusElement.textContent = "The signed and notarized macOS installer is available. Windows 11 is pending Azure signing approval.";
           } else {
-            statusElement.textContent = "The signed Windows installer is available. The macOS installer is pending notarization.";
+            statusElement.textContent = windowsSigned
+              ? "The signed Windows installer is available. The macOS installer is pending notarization."
+              : "The unsigned Windows installer is available. Windows may show an unknown-publisher warning.";
           }
         })
         .catch(() => {
