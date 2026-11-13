@@ -37,6 +37,18 @@ verify_installer() {
 verify_installer "$(jq -er '.windows.path' "$work_dir/latest.json")"
 verify_installer "$(jq -er '.macos.path' "$work_dir/latest.json")"
 
+for feed in appcast.xml appcast-macos.xml; do
+  curl -fsS "$base_url/updates/$feed" -o "$work_dir/$feed"
+  grep -F '<rss' "$work_dir/$feed" >/dev/null
+  grep -F 'sparkle:edSignature=' "$work_dir/$feed" >/dev/null
+  curl -fsS "$base_url/updates/$feed.signature" -o "$work_dir/$feed.signature"
+  test -s "$work_dir/$feed.signature"
+done
+
+curl -fsS "$base_url/admin/" -o "$work_dir/admin.html"
+grep -F "Skynet Release Control" "$work_dir/admin.html" >/dev/null
+test "$(curl -sS -o /dev/null -w '%{http_code}' "$base_url/api/admin/runs")" = 401
+
 test "$(curl -sS -o /dev/null -w '%{http_code}' "$base_url/.gitignore")" = 404
 test "$(curl -sS -o /dev/null -w '%{http_code}' -X POST "$(jq -er '.macos.path' "$work_dir/latest.json")")" = 405
 

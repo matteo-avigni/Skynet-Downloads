@@ -36,6 +36,25 @@ upload_artifact() {
     --cache-control "public, max-age=31536000, immutable"
 }
 
+upload_metadata() {
+  local file="$1"
+  local content_type
+
+  [[ -f "$file" ]] || { echo "Missing metadata: $file" >&2; exit 1; }
+  case "$file" in
+    *.json) content_type="application/json; charset=utf-8" ;;
+    *.xml) content_type="application/xml; charset=utf-8" ;;
+    *.signature) content_type="text/plain; charset=utf-8" ;;
+    *) echo "Refusing unsupported metadata: $file" >&2; exit 1 ;;
+  esac
+
+  npx wrangler r2 object put "$bucket/$file" \
+    --remote \
+    --file "$file" \
+    --content-type "$content_type" \
+    --cache-control "no-store"
+}
+
 manifest_path_to_file() {
   local value="$1"
   case "$value" in
@@ -60,5 +79,12 @@ else
   while IFS= read -r manifest_path; do
     upload_artifact "$(manifest_path_to_file "$manifest_path")"
   done < <(jq -er '.windows.path, .macos.path' downloads/latest.json)
+fi
+
+upload_metadata downloads/latest.json
+if [[ -d updates ]]; then
+  while IFS= read -r file; do
+    upload_metadata "$file"
+  done < <(find updates -type f \( -name 'appcast*.xml' -o -name 'appcast*.xml.signature' \) | sort)
 fi
 

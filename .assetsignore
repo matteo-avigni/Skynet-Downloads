@@ -14,5 +14,4 @@ wrangler.jsonc
 README.md
 .nojekyll
 downloads/*
-!downloads/latest.json
 
