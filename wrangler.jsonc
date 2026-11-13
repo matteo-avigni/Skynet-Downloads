@@ -1,0 +1,36 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "skynet-downloads",
+  "main": "./worker/index.ts",
+  "compatibility_date": "2026-11-13",
+  "upload_source_maps": true,
+  "workers_dev": false,
+  "preview_urls": false,
+  "routes": [
+    {
+      "pattern": "skynet.matteo-avigni.com",
+      "custom_domain": true
+    }
+  ],
+  "assets": {
+    "directory": ".",
+    "binding": "ASSETS",
+    "run_worker_first": [
+      "/downloads/*",
+      "!/downloads/latest.json"
+    ],
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "none"
+  },
+  "r2_buckets": [
+    {
+      "binding": "INSTALLERS",
+      "bucket_name": "skynet-downloads"
+    }
+  ],
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 0.1
+  }
+}
+
