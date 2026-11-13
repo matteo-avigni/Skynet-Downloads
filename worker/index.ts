@@ -5,6 +5,10 @@ const METADATA_PATH =
 const ADMIN_API_PREFIX = "/api/admin/";
 const GITHUB_REPOSITORY = "matteo-avigni/Skynet";
 const GITHUB_WORKFLOW = "publish-update-feeds.yml";
+const PUBLIC_ORIGIN = "https://skynet.matteo-avigni.com";
+const MAX_INSTALLER_SIZE = 100_000_000;
+const VERSION_PATTERN = /^\d+\.\d+\.\d+$/;
+const BUILD_PATTERN = /^[0-9a-f]{7}$/;
 
 type WorkerEnv = Env & {
   GITHUB_WORKFLOW_TOKEN?: string;
@@ -31,6 +35,28 @@ type GitHubWorkflowRunsResponse = {
   workflow_runs: GitHubWorkflowRun[];
 };
 
+type InstallerPlatform = "windows" | "macos";
+
+type ReleaseManifest = {
+  version: string;
+  build: string;
+  tag: string;
+  publishedUtc: string;
+  windows: {
+    path: string;
+    signed: boolean;
+  };
+  macos: {
+    path: string;
+  };
+};
+
+type PublishPackagesRequest = {
+  version?: unknown;
+  build?: unknown;
+  windowsSigned?: unknown;
+};
+
 function securityHeaders(headers: Headers, acceptsRanges = false): Headers {
   if (acceptsRanges) headers.set("Accept-Ranges", "bytes");
   headers.set("Content-Security-Policy", "default-src 'none'");
@@ -51,6 +77,75 @@ function jsonResponse(payload: unknown, status = 200): Response {
       }),
     ),
   });
+}
+
+function errorResponse(message: string, status: number): Response {
+  return jsonResponse({ error: message }, status);
+}
+
+function releaseIdentity(versionValue: string | null, buildValue: string | null): {
+  version: string;
+  build: string;
+  tag: string;
+} | null {
+  const version = versionValue?.trim() ?? "";
+  const build = buildValue?.trim().toLowerCase() ?? "";
+  if (!VERSION_PATTERN.test(version) || !BUILD_PATTERN.test(build)) return null;
+  return { version, build, tag: `v${version}-${build}` };
+}
+
+function installerFilename(platform: InstallerPlatform, version: string): string {
+  return platform === "windows"
+    ? "skynet-win-x64.msi"
+    : `skynet-${version}-macos-universal.pkg`;
+}
+
+function installerKey(platform: InstallerPlatform, version: string, tag: string): string {
+  return `downloads/${tag}/${installerFilename(platform, version)}`;
+}
+
+function parsePlatform(value: string | null): InstallerPlatform | null {
+  return value === "windows" || value === "macos" ? value : null;
+}
+
+function compareVersions(left: string, right: string): number {
+  const leftParts = left.split(".").map(Number);
+  const rightParts = right.split(".").map(Number);
+  for (let index = 0; index < 3; index += 1) {
+    const difference = leftParts[index] - rightParts[index];
+    if (difference !== 0) return difference;
+  }
+  return 0;
+}
+
+async function currentManifest(env: WorkerEnv): Promise<ReleaseManifest | null> {
+  const object = await env.INSTALLERS.get("downloads/latest.json");
+  if (object === null) return null;
+
+  try {
+    return (await object.json()) as ReleaseManifest;
+  } catch {
+    return null;
+  }
+}
+
+async function validateReleaseAdvance(
+  env: WorkerEnv,
+  version: string,
+  tag: string,
+): Promise<Response | null> {
+  const current = await currentManifest(env);
+  if (current === null || current.tag === tag) return null;
+  if (current.version === version) {
+    return errorResponse(
+      `Version ${version} is already published with build ${current.build}. Increment the version first.`,
+      409,
+    );
+  }
+  if (VERSION_PATTERN.test(current.version) && compareVersions(version, current.version) < 0) {
+    return errorResponse(`Version ${version} is older than current version ${current.version}.`, 409);
+  }
+  return null;
 }
 
 function decodePublicKey(pathname: string): string | null {
@@ -242,8 +337,8 @@ function githubHeaders(token: string): Headers {
 }
 
 async function authenticateAdmin(request: Request, env: WorkerEnv): Promise<Response | null> {
-  if (!env.SKYNET_ADMIN_TOKEN || !env.GITHUB_WORKFLOW_TOKEN) {
-    return jsonResponse({ error: "Admin publishing is not configured." }, 503);
+  if (!env.SKYNET_ADMIN_TOKEN) {
+    return errorResponse("Admin authentication is not configured.", 503);
   }
 
   const providedToken = adminToken(request);
@@ -258,6 +353,10 @@ async function authenticateAdmin(request: Request, env: WorkerEnv): Promise<Resp
 }
 
 async function dispatchUpdateFeedWorkflow(env: WorkerEnv): Promise<Response> {
+  if (!env.GITHUB_WORKFLOW_TOKEN) {
+    return errorResponse("Updater publishing is not configured.", 503);
+  }
+
   const response = await fetch(
     `https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/workflows/${GITHUB_WORKFLOW}/dispatches`,
     {
@@ -275,6 +374,10 @@ async function dispatchUpdateFeedWorkflow(env: WorkerEnv): Promise<Response> {
 }
 
 async function listUpdateFeedRuns(env: WorkerEnv): Promise<Response> {
+  if (!env.GITHUB_WORKFLOW_TOKEN) {
+    return errorResponse("Updater publishing is not configured.", 503);
+  }
+
   const response = await fetch(
     `https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/workflows/${GITHUB_WORKFLOW}/runs?event=workflow_dispatch&per_page=8`,
     {
@@ -300,15 +403,144 @@ async function listUpdateFeedRuns(env: WorkerEnv): Promise<Response> {
   return jsonResponse({ runs });
 }
 
+async function uploadInstaller(
+  request: Request,
+  env: WorkerEnv,
+  url: URL,
+): Promise<Response> {
+  const platform = parsePlatform(url.searchParams.get("platform"));
+  const identity = releaseIdentity(
+    url.searchParams.get("version"),
+    url.searchParams.get("build"),
+  );
+  if (platform === null || identity === null) {
+    return errorResponse("A valid platform, semantic version, and seven-character build are required.", 400);
+  }
+
+  const releaseFailure = await validateReleaseAdvance(env, identity.version, identity.tag);
+  if (releaseFailure !== null) return releaseFailure;
+
+  const expectedFilename = installerFilename(platform, identity.version);
+  if (request.headers.get("X-Skynet-Filename") !== expectedFilename) {
+    return errorResponse(`Expected installer filename ${expectedFilename}.`, 400);
+  }
+
+  const contentLength = Number(request.headers.get("Content-Length"));
+  if (!Number.isSafeInteger(contentLength) || contentLength <= 0) {
+    return errorResponse("The installer size is missing or invalid.", 411);
+  }
+  if (contentLength > MAX_INSTALLER_SIZE) {
+    return errorResponse("The installer exceeds the 100 MB upload limit.", 413);
+  }
+  if (request.body === null) {
+    return errorResponse("The installer body is missing.", 400);
+  }
+
+  const key = installerKey(platform, identity.version, identity.tag);
+  const existing = await env.INSTALLERS.head(key);
+  if (existing !== null) {
+    if (existing.size !== contentLength) {
+      return errorResponse("An immutable installer already exists at this release path.", 409);
+    }
+    return jsonResponse({ platform, filename: expectedFilename, size: existing.size, alreadyPresent: true });
+  }
+
+  const contentType = platform === "windows"
+    ? "application/x-msi"
+    : "application/vnd.apple.installer+xml";
+  await env.INSTALLERS.put(key, request.body, {
+    httpMetadata: {
+      contentType,
+      contentDisposition: `attachment; filename="${expectedFilename}"`,
+      cacheControl: "public, max-age=31536000, immutable",
+    },
+  });
+
+  const uploaded = await env.INSTALLERS.head(key);
+  if (uploaded === null || uploaded.size !== contentLength) {
+    return errorResponse("The installer upload could not be verified.", 502);
+  }
+
+  return jsonResponse({ platform, filename: expectedFilename, size: uploaded.size, alreadyPresent: false }, 201);
+}
+
+async function publishPackages(request: Request, env: WorkerEnv): Promise<Response> {
+  let payload: PublishPackagesRequest;
+  try {
+    payload = (await request.json()) as PublishPackagesRequest;
+  } catch {
+    return errorResponse("The package publication request is invalid.", 400);
+  }
+
+  const identity = releaseIdentity(
+    typeof payload.version === "string" ? payload.version : null,
+    typeof payload.build === "string" ? payload.build : null,
+  );
+  if (identity === null || typeof payload.windowsSigned !== "boolean") {
+    return errorResponse("A valid version, build, and Windows signing state are required.", 400);
+  }
+
+  const releaseFailure = await validateReleaseAdvance(env, identity.version, identity.tag);
+  if (releaseFailure !== null) return releaseFailure;
+
+  const windowsKey = installerKey("windows", identity.version, identity.tag);
+  const macosKey = installerKey("macos", identity.version, identity.tag);
+  const [windowsObject, macosObject] = await Promise.all([
+    env.INSTALLERS.head(windowsKey),
+    env.INSTALLERS.head(macosKey),
+  ]);
+  if (windowsObject === null || macosObject === null) {
+    return errorResponse("Both the Windows MSI and macOS PKG must be uploaded before publishing.", 409);
+  }
+
+  const manifest: ReleaseManifest = {
+    version: identity.version,
+    build: identity.build,
+    tag: identity.tag,
+    publishedUtc: new Date().toISOString().replace(/\.\d{3}Z$/, "Z"),
+    windows: {
+      path: `${PUBLIC_ORIGIN}/${windowsKey}`,
+      signed: payload.windowsSigned,
+    },
+    macos: {
+      path: `${PUBLIC_ORIGIN}/${macosKey}`,
+    },
+  };
+  await env.INSTALLERS.put(
+    "downloads/latest.json",
+    `${JSON.stringify(manifest, null, 2)}\n`,
+    {
+      httpMetadata: {
+        contentType: "application/json; charset=utf-8",
+        cacheControl: "no-store",
+      },
+    },
+  );
+
+  return jsonResponse({ release: manifest }, 201);
+}
+
 async function handleAdminApi(request: Request, env: WorkerEnv, pathname: string): Promise<Response> {
   const authenticationFailure = await authenticateAdmin(request, env);
   if (authenticationFailure !== null) return authenticationFailure;
 
-  if (pathname === `${ADMIN_API_PREFIX}publish` && request.method === "POST") {
+  if (pathname === `${ADMIN_API_PREFIX}session` && request.method === "GET") {
+    return jsonResponse({ authenticated: true });
+  }
+
+  if (pathname === `${ADMIN_API_PREFIX}packages/upload` && request.method === "POST") {
+    return uploadInstaller(request, env, new URL(request.url));
+  }
+
+  if (pathname === `${ADMIN_API_PREFIX}packages/publish` && request.method === "POST") {
+    return publishPackages(request, env);
+  }
+
+  if (pathname === `${ADMIN_API_PREFIX}updater/publish` && request.method === "POST") {
     return dispatchUpdateFeedWorkflow(env);
   }
 
-  if (pathname === `${ADMIN_API_PREFIX}runs` && request.method === "GET") {
+  if (pathname === `${ADMIN_API_PREFIX}updater/runs` && request.method === "GET") {
     return listUpdateFeedRuns(env);
   }
 

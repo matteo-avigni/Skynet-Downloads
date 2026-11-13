@@ -11,17 +11,17 @@
         color-scheme: dark;
         --background: #101312;
         --surface: #181d1b;
+        --surface-strong: #202723;
         --border: #3b4641;
         --text: #f4f7f5;
         --muted: #aeb9b4;
-        --green: #36d477;
-        --green-strong: #1fb45e;
-        --blue: #6eb8ff;
-        --danger: #ff6b6b;
+        --green: #55d982;
+        --green-strong: #28b862;
+        --blue: #70baff;
+        --danger: #ff7474;
       }
-
       * { box-sizing: border-box; }
-
+      [hidden] { display: none !important; }
       body {
         margin: 0;
         min-height: 100vh;
@@ -29,13 +29,55 @@
         color: var(--text);
         font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       }
-
-      main {
-        width: min(100% - 32px, 920px);
-        margin: 0 auto;
-        padding: 40px 0 64px;
+      h1, h2, p { margin: 0; }
+      h1 { font-size: 30px; letter-spacing: 0; }
+      h2 { font-size: 19px; letter-spacing: 0; }
+      button, input { font: inherit; }
+      button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; }
+      button {
+        min-height: 44px;
+        padding: 10px 16px;
+        border: 1px solid var(--green-strong);
+        border-radius: 6px;
+        background: var(--green);
+        color: #07120c;
+        font-weight: 800;
+        cursor: pointer;
       }
-
+      button.secondary { border-color: var(--border); background: var(--surface); color: var(--text); }
+      button:disabled { cursor: wait; opacity: 0.55; }
+      input[type="text"], input[type="password"], input[type="file"] {
+        width: 100%;
+        min-height: 44px;
+        padding: 10px 12px;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        background: var(--surface);
+        color: var(--text);
+      }
+      input[type="file"] { padding: 7px; }
+      input[type="file"]::file-selector-button {
+        margin-right: 12px;
+        padding: 7px 11px;
+        border: 0;
+        border-radius: 4px;
+        background: var(--surface-strong);
+        color: var(--text);
+        cursor: pointer;
+      }
+      label { display: block; margin-bottom: 7px; color: var(--muted); font-size: 13px; font-weight: 700; }
+      .login-shell { display: grid; min-height: 100vh; place-items: center; padding: 24px; }
+      .login-panel {
+        width: min(100%, 420px);
+        padding: 28px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: var(--surface);
+      }
+      .login-brand { display: flex; gap: 14px; align-items: center; margin-bottom: 28px; }
+      .login-brand img { width: 42px; height: 42px; object-fit: contain; }
+      .login-panel button { width: 100%; margin-top: 14px; }
+      .dashboard { width: min(100% - 32px, 980px); margin: 0 auto; padding: 40px 0 64px; }
       header {
         display: flex;
         gap: 20px;
@@ -44,85 +86,28 @@
         padding-bottom: 24px;
         border-bottom: 1px solid var(--border);
       }
-
-      h1, h2, p { margin: 0; }
-      h1 { font-size: 30px; letter-spacing: 0; }
-      h2 { font-size: 19px; letter-spacing: 0; }
-
-      .back {
-        color: var(--blue);
-        font-weight: 700;
-        text-decoration: none;
-      }
-
-      section {
-        padding: 24px 0;
-        border-bottom: 1px solid var(--border);
-      }
-
-      .release-row,
-      .auth-row,
-      .action-row,
-      .run {
+      .header-actions { display: flex; gap: 10px; align-items: center; }
+      .back { color: var(--blue); font-weight: 700; text-decoration: none; }
+      section { padding: 24px 0; border-bottom: 1px solid var(--border); }
+      .section-heading, .release-row, .action-row, .run { display: grid; gap: 12px; align-items: center; }
+      .section-heading, .release-row { grid-template-columns: minmax(0, 1fr) auto; }
+      .release-row { margin-top: 16px; }
+      .action-row { grid-template-columns: auto minmax(0, 1fr); margin-top: 18px; }
+      .field-grid, .file-grid {
         display: grid;
-        gap: 12px;
-        align-items: center;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+        margin-top: 18px;
       }
-
-      .release-row { grid-template-columns: 1fr auto; margin-top: 16px; }
-      .auth-row { grid-template-columns: minmax(0, 1fr) auto; margin-top: 16px; }
-      .action-row { grid-template-columns: auto 1fr; margin-top: 16px; }
-
-      label {
-        display: block;
-        margin-bottom: 7px;
-        color: var(--muted);
-        font-size: 13px;
-        font-weight: 700;
-      }
-
-      input {
-        width: 100%;
-        min-height: 44px;
-        padding: 10px 12px;
-        border: 1px solid var(--border);
-        border-radius: 6px;
-        background: var(--surface);
-        color: var(--text);
-        font: inherit;
-      }
-
-      button {
-        min-height: 44px;
-        padding: 10px 16px;
-        border: 1px solid var(--green-strong);
-        border-radius: 6px;
-        background: var(--green);
-        color: #07120c;
-        font: inherit;
-        font-weight: 800;
-        cursor: pointer;
-      }
-
-      button.secondary {
-        border-color: var(--border);
-        background: var(--surface);
-        color: var(--text);
-      }
-
-      button:disabled { cursor: wait; opacity: 0.55; }
-      button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; }
-
-      .version,
-      .status {
-        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-        font-size: 14px;
-      }
-
-      .version { color: var(--green); font-weight: 700; }
+      .file-grid { margin-top: 16px; }
+      .check-row { display: flex; gap: 10px; align-items: center; margin-top: 16px; color: var(--muted); }
+      .check-row input { width: 18px; height: 18px; accent-color: var(--green); }
+      .check-row label { margin: 0; font-size: 14px; }
+      .version, .status { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 14px; }
+      .version, .success { color: var(--green); }
+      .version { font-weight: 700; }
       .muted { color: var(--muted); }
       .error { color: var(--danger); }
-
       #runs { margin-top: 16px; }
       .run {
         grid-template-columns: minmax(0, 1fr) auto auto;
@@ -130,77 +115,170 @@
         padding: 10px 0;
         border-top: 1px solid var(--border);
       }
-
       .run a { color: var(--text); font-weight: 700; text-decoration: none; }
       .run time { color: var(--muted); font-size: 13px; }
-
-      @media (max-width: 620px) {
-        main { width: min(100% - 24px, 920px); padding-top: 24px; }
-        header, .release-row, .auth-row, .action-row, .run { grid-template-columns: 1fr; align-items: stretch; }
+      @media (max-width: 680px) {
+        .dashboard { width: min(100% - 24px, 980px); padding-top: 24px; }
+        header, .section-heading, .release-row, .action-row, .field-grid, .file-grid, .run {
+          grid-template-columns: 1fr;
+          align-items: stretch;
+        }
         header { display: grid; }
+        .header-actions { justify-content: space-between; }
       }
     </style>
   </head>
   <body>
-    <main>
+    <main id="login-view" class="login-shell">
+      <form id="login-form" class="login-panel">
+        <div class="login-brand">
+          <img src="../assets/skynet-mark-transparent.png" alt="">
+          <h1>Release Control</h1>
+        </div>
+        <label for="password">Admin password</label>
+        <input id="password" type="password" autocomplete="current-password" required>
+        <button id="unlock" type="submit">Unlock</button>
+        <p id="login-message" class="status muted" role="status" aria-live="polite"></p>
+      </form>
+    </main>
+
+    <main id="dashboard" class="dashboard" hidden>
       <header>
         <h1>Skynet Release Control</h1>
-        <a class="back" href="../">Public downloads</a>
+        <div class="header-actions">
+          <a class="back" href="../">Public downloads</a>
+          <button id="logout" class="secondary" type="button">Log out</button>
+        </div>
       </header>
 
       <section aria-labelledby="current-title">
-        <h2 id="current-title">Current package</h2>
+        <div class="section-heading">
+          <h2 id="current-title">Current package</h2>
+          <button id="refresh" class="secondary" type="button">Refresh</button>
+        </div>
         <div class="release-row">
           <p id="release-detail" class="muted">Loading manifest</p>
           <span id="version" class="version">Pending</span>
         </div>
       </section>
 
-      <section aria-labelledby="publish-title">
-        <h2 id="publish-title">Publish update feeds</h2>
-        <div class="auth-row">
-          <div>
-            <label for="token">Admin token</label>
-            <input id="token" type="password" autocomplete="off" spellcheck="false">
+      <section aria-labelledby="packages-title">
+        <h2 id="packages-title">Publish installer packages</h2>
+        <form id="packages-form">
+          <div class="field-grid">
+            <div>
+              <label for="package-version">Version</label>
+              <input id="package-version" type="text" inputmode="numeric" placeholder="0.1.11" required>
+            </div>
+            <div>
+              <label for="package-build">Build (7-character commit)</label>
+              <input id="package-build" type="text" maxlength="7" placeholder="abcdef0" required>
+            </div>
           </div>
-          <button id="refresh" class="secondary" type="button">Refresh status</button>
-        </div>
+          <div class="file-grid">
+            <div>
+              <label for="windows-installer">Windows MSI</label>
+              <input id="windows-installer" type="file" accept=".msi,application/x-msi" required>
+            </div>
+            <div>
+              <label for="macos-installer">macOS PKG</label>
+              <input id="macos-installer" type="file" accept=".pkg,application/vnd.apple.installer+xml" required>
+            </div>
+          </div>
+          <div class="check-row">
+            <input id="windows-signed" type="checkbox">
+            <label for="windows-signed">Windows installer is Authenticode signed</label>
+          </div>
+          <div class="action-row">
+            <button id="publish-packages" type="submit">Publish installers</button>
+            <p id="packages-message" class="status muted" role="status" aria-live="polite"></p>
+          </div>
+        </form>
+      </section>
+
+      <section aria-labelledby="updater-title">
+        <h2 id="updater-title">Publish updater feeds</h2>
         <div class="action-row">
-          <button id="publish" type="button">Publish current package</button>
-          <p id="message" class="status muted" role="status" aria-live="polite"></p>
+          <button id="publish-updater" type="button">Publish updater</button>
+          <p id="updater-message" class="status muted" role="status" aria-live="polite"></p>
         </div>
       </section>
 
       <section aria-labelledby="runs-title">
-        <h2 id="runs-title">Recent publishing runs</h2>
-        <div id="runs" class="muted">Enter the admin token to load runs.</div>
+        <h2 id="runs-title">Recent updater runs</h2>
+        <div id="runs" class="muted">Loading runs</div>
       </section>
     </main>
 
     <script>
-      const tokenInput = document.getElementById("token");
-      const publishButton = document.getElementById("publish");
+      const loginView = document.getElementById("login-view");
+      const dashboard = document.getElementById("dashboard");
+      const loginForm = document.getElementById("login-form");
+      const passwordInput = document.getElementById("password");
+      const unlockButton = document.getElementById("unlock");
+      const loginMessage = document.getElementById("login-message");
+      const packagesForm = document.getElementById("packages-form");
+      const packagesButton = document.getElementById("publish-packages");
+      const packagesMessage = document.getElementById("packages-message");
+      const updaterButton = document.getElementById("publish-updater");
+      const updaterMessage = document.getElementById("updater-message");
       const refreshButton = document.getElementById("refresh");
-      const message = document.getElementById("message");
       const runsElement = document.getElementById("runs");
+      let adminToken = "";
 
-      function authorizationHeaders() {
-        const token = tokenInput.value.trim();
-        if (!token) throw new Error("Enter the admin token.");
-        return { Authorization: `Bearer ${token}` };
+      function status(element, message, kind = "muted") {
+        element.className = `status ${kind}`;
+        element.textContent = message;
+      }
+
+      function lock(message = "") {
+        adminToken = "";
+        passwordInput.value = "";
+        dashboard.hidden = true;
+        loginView.hidden = false;
+        status(loginMessage, message, message ? "error" : "muted");
+        passwordInput.focus();
       }
 
       async function adminRequest(path, options = {}) {
-        const response = await fetch(path, {
-          ...options,
-          cache: "no-store",
-          headers: { ...authorizationHeaders(), ...(options.headers || {}) },
-        });
+        const headers = new Headers(options.headers || {});
+        headers.set("Authorization", `Bearer ${adminToken}`);
+        const response = await fetch(path, { ...options, cache: "no-store", headers });
         if (!response.ok) {
+          if (response.status === 401) lock("Incorrect admin password.");
           const payload = await response.json().catch(() => ({}));
           throw new Error(payload.error || `Request failed (${response.status}).`);
         }
         return response.json();
+      }
+
+      async function unlock(event) {
+        event.preventDefault();
+        const candidate = passwordInput.value.trim();
+        if (!candidate) return;
+        unlockButton.disabled = true;
+        status(loginMessage, "Checking password");
+        adminToken = candidate;
+        try {
+          await adminRequest("../api/admin/session");
+          passwordInput.value = "";
+          loginView.hidden = true;
+          dashboard.hidden = false;
+          await Promise.all([loadRelease(), loadRuns()]);
+        } catch (error) {
+          if (adminToken) lock(error.message);
+        } finally {
+          unlockButton.disabled = false;
+        }
+      }
+
+      async function loadRelease() {
+        const response = await fetch("../downloads/latest.json", { cache: "no-store" });
+        if (!response.ok) throw new Error("Release manifest unavailable.");
+        const release = await response.json();
+        document.getElementById("version").textContent = `v${release.version} (${release.build})`;
+        const windowsState = release.windows?.signed === false ? "unsigned Windows" : "signed Windows";
+        document.getElementById("release-detail").textContent = `${windowsState} and notarized macOS installers`;
       }
 
       function runState(run) {
@@ -211,11 +289,11 @@
       async function loadRuns() {
         refreshButton.disabled = true;
         try {
-          const payload = await adminRequest("../api/admin/runs");
+          const payload = await adminRequest("../api/admin/updater/runs");
           runsElement.className = "";
           runsElement.replaceChildren();
           if (!payload.runs.length) {
-            runsElement.textContent = "No publishing runs yet.";
+            runsElement.textContent = "No updater runs yet.";
             return;
           }
           for (const run of payload.runs) {
@@ -225,13 +303,13 @@
             link.href = run.url;
             link.rel = "noopener noreferrer";
             link.textContent = `${run.title} (${run.revision})`;
-            const state = document.createElement("span");
-            state.className = "status";
-            state.textContent = runState(run);
+            const stateElement = document.createElement("span");
+            stateElement.className = "status";
+            stateElement.textContent = runState(run);
             const time = document.createElement("time");
             time.dateTime = run.createdAt;
             time.textContent = new Date(run.createdAt).toLocaleString();
-            row.append(link, state, time);
+            row.append(link, stateElement, time);
             runsElement.append(row);
           }
         } catch (error) {
@@ -242,40 +320,83 @@
         }
       }
 
-      async function publish() {
-        publishButton.disabled = true;
-        message.className = "status muted";
-        message.textContent = "Submitting publish job";
+      function expectedInstallerName(platform, version) {
+        return platform === "windows" ? "skynet-win-x64.msi" : `skynet-${version}-macos-universal.pkg`;
+      }
+
+      async function uploadInstaller(platform, file, version, build) {
+        const expectedName = expectedInstallerName(platform, version);
+        if (file.name !== expectedName) throw new Error(`Expected ${expectedName}, selected ${file.name}.`);
+        if (file.size > 100000000) throw new Error(`${expectedName} exceeds the 100 MB upload limit.`);
+        return adminRequest(
+          `../api/admin/packages/upload?platform=${platform}&version=${encodeURIComponent(version)}&build=${encodeURIComponent(build)}`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": file.type || "application/octet-stream",
+              "X-Skynet-Filename": file.name,
+            },
+            body: file,
+          },
+        );
+      }
+
+      async function publishPackages(event) {
+        event.preventDefault();
+        const version = document.getElementById("package-version").value.trim();
+        const build = document.getElementById("package-build").value.trim().toLowerCase();
+        const windowsFile = document.getElementById("windows-installer").files[0];
+        const macosFile = document.getElementById("macos-installer").files[0];
+        if (!/^\d+\.\d+\.\d+$/.test(version) || !/^[0-9a-f]{7}$/.test(build)) {
+          status(packagesMessage, "Enter a semantic version and seven-character commit.", "error");
+          return;
+        }
+        if (!windowsFile || !macosFile) return;
+
+        packagesButton.disabled = true;
         try {
-          await adminRequest("../api/admin/publish", { method: "POST" });
-          message.textContent = "Publish job queued.";
-          await loadRuns();
+          status(packagesMessage, "Uploading Windows MSI");
+          await uploadInstaller("windows", windowsFile, version, build);
+          status(packagesMessage, "Uploading macOS PKG");
+          await uploadInstaller("macos", macosFile, version, build);
+          status(packagesMessage, "Publishing package manifest");
+          await adminRequest("../api/admin/packages/publish", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              version,
+              build,
+              windowsSigned: document.getElementById("windows-signed").checked,
+            }),
+          });
+          status(packagesMessage, `Published v${version} (${build}).`, "success");
+          await loadRelease();
         } catch (error) {
-          message.className = "status error";
-          message.textContent = error.message;
+          status(packagesMessage, error.message, "error");
         } finally {
-          publishButton.disabled = false;
+          packagesButton.disabled = false;
         }
       }
 
-      fetch("../downloads/latest.json", { cache: "no-store" })
-        .then((response) => {
-          if (!response.ok) throw new Error();
-          return response.json();
-        })
-        .then((release) => {
-          document.getElementById("version").textContent = `v${release.version} (${release.build})`;
-          document.getElementById("release-detail").textContent = "Windows 11 and macOS installers";
-        })
-        .catch(() => {
-          document.getElementById("release-detail").textContent = "Manifest unavailable";
-        });
+      async function publishUpdater() {
+        updaterButton.disabled = true;
+        status(updaterMessage, "Submitting updater job");
+        try {
+          await adminRequest("../api/admin/updater/publish", { method: "POST" });
+          status(updaterMessage, "Updater job queued.", "success");
+          await loadRuns();
+        } catch (error) {
+          status(updaterMessage, error.message, "error");
+        } finally {
+          updaterButton.disabled = false;
+        }
+      }
 
-      publishButton.addEventListener("click", publish);
-      refreshButton.addEventListener("click", loadRuns);
-      tokenInput.addEventListener("keydown", (event) => {
-        if (event.key === "Enter") loadRuns();
-      });
+      loginForm.addEventListener("submit", unlock);
+      packagesForm.addEventListener("submit", publishPackages);
+      updaterButton.addEventListener("click", publishUpdater);
+      refreshButton.addEventListener("click", () => Promise.all([loadRelease(), loadRuns()]));
+      document.getElementById("logout").addEventListener("click", () => lock());
     </script>
   </body>
 </html>
