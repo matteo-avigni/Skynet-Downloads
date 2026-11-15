@@ -197,21 +197,9 @@
         grid-template-columns: minmax(0, 1fr) auto;
         gap: 2rem 3rem;
         align-items: center;
-        padding-top: clamp(3.5rem, 8vw, 6.5rem);
+        padding-top: 2rem;
         padding-bottom: clamp(2.5rem, 5vw, 4rem);
       }
-
-      .crumbs {
-        display: flex;
-        flex-wrap: wrap;
-        gap: .5rem;
-        margin-bottom: 1.75rem;
-        font-size: 14px;
-        color: var(--dim);
-      }
-
-      .crumbs a:hover { color: var(--ink); }
-      .crumbs [aria-current] { color: var(--text); }
 
       .status {
         display: inline-flex;
@@ -263,10 +251,10 @@
       .hero-h i { font-style: normal; color: var(--accent); }
 
       .hero-p {
-        max-width: 38rem;
-        margin-top: 1.5rem;
+        max-width: 40rem;
+        margin-top: 1.25rem;
         color: var(--muted);
-        font-size: clamp(1.1rem, 1.6vw, 1.3rem);
+        font-size: 1.05rem;
         line-height: 1.5;
       }
 
@@ -317,7 +305,7 @@
         position: relative;
         display: grid;
         grid-template-rows: subgrid;
-        grid-row: span 3;
+        grid-row: span 4;
         row-gap: 0;
         min-width: 0;
         padding: 1.5rem;
@@ -346,6 +334,7 @@
       .entry-top { grid-row: 1; }
       .entry-h { grid-row: 2; align-self: end; }
       .get { grid-row: 3; }
+      .entry-note { grid-row: 4; }
 
       .entry:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); }
       .entry:hover::before { transform: scale(1.15); opacity: 1; }
@@ -482,11 +471,6 @@
     <main>
       <section class="wrap hero" aria-labelledby="page-title">
         <div>
-          <nav class="crumbs" aria-label="Breadcrumb">
-            <a href="https://matteo-avigni.com/projects/">Projects</a><span aria-hidden="true">/</span>
-            <a href="https://matteo-avigni.com/projects/skynet/">Skynet</a><span aria-hidden="true">/</span>
-            <span aria-current="page">Downloads</span>
-          </nav>
           <p id="status" class="status" role="status">
             <span class="pulse" aria-hidden="true"></span>
             <span id="version" class="version">Checking availability</span>
@@ -510,6 +494,7 @@
             <div class="entry-top"><span class="chip">Installer · MSI</span></div>
             <h3 class="entry-h">Windows 11</h3>
             <a id="windows-download" class="get" aria-disabled="true">Pending build<svg class="ar" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3v9M4 8.5 8 12.5l4-4" fill="none" stroke="currentColor" stroke-width="1.4"/></svg></a>
+            <p id="unsigned-note" class="note entry-note" hidden>The Windows build is not code-signed yet. If SmartScreen warns about an unknown publisher, choose “More info”, then “Run anyway”.</p>
           </li>
 
           <li id="macos-entry" class="entry" style="--c: var(--c-macos)">
@@ -524,7 +509,6 @@
             <a class="get" href="docs/Skynet-Operator-Handbook.pdf" download>Download PDF<svg class="ar" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3v9M4 8.5 8 12.5l4-4" fill="none" stroke="currentColor" stroke-width="1.4"/></svg></a>
           </li>
         </ul>
-        <p id="unsigned-note" class="note" hidden>The Windows build is not code-signed yet. If SmartScreen warns about an unknown publisher, choose “More info”, then “Run anyway”.</p>
       </section>
     </main>
 
