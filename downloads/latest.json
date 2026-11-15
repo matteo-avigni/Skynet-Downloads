@@ -1,14 +1,11 @@
 {
-  "version": "0.1.10",
-  "build": "5e7f542",
-  "tag": "v0.1.10-5e7f542",
-  "sourceRevision": "5e7f54270b6744f409d87a21842b542644aebfc3",
-  "publishedUtc": "2026-11-13T10:39:00Z",
+  "version": "0.1.11",
+  "build": "6931901",
+  "tag": "v0.1.11-6931901",
+  "sourceRevision": "69319019174c0f6e05a3ef6ee247b0767a357e2a",
+  "publishedUtc": "2026-11-15T21:32:46Z",
   "windows": {
-    "path": "https://skynet.matteo-avigni.com/downloads/v0.1.10-5e7f542/skynet-win-x64.msi",
+    "path": "downloads/v0.1.11-6931901/skynet-win-x64.msi",
     "signed": false
-  },
-  "macos": {
-    "path": "https://skynet.matteo-avigni.com/downloads/v0.1.10-5e7f542/skynet-0.1.10-macos-universal.pkg"
   }
 }
