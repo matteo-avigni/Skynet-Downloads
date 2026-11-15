@@ -7,6 +7,13 @@ trap 'rm -rf "$work_dir"' EXIT
 
 curl -fsS "$base_url/" -o "$work_dir/index.html"
 grep -F "Skynet Installers" "$work_dir/index.html" >/dev/null
+grep -F "docs/Skynet-Operator-Handbook.pdf" "$work_dir/index.html" >/dev/null
+
+curl -fsS -D "$work_dir/handbook-headers" -o "$work_dir/handbook.pdf" \
+  "$base_url/docs/Skynet-Operator-Handbook.pdf"
+grep -Eiq '^content-type: application/pdf' "$work_dir/handbook-headers"
+grep -Eiq '^content-disposition: attachment' "$work_dir/handbook-headers"
+test "$(head -c 5 "$work_dir/handbook.pdf")" = "%PDF-"
 
 curl -fsS "$base_url/downloads/latest.json" -o "$work_dir/latest.json"
 jq -e '.version and .build and .windows.path and .macos.path' "$work_dir/latest.json" >/dev/null

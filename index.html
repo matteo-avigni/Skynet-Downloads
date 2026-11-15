@@ -3,203 +3,549 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Skynet Installers</title>
-    <meta name="description" content="Official Windows and macOS installers for Skynet.">
+    <title>Download Skynet — Satellite Tracking Software for Windows and macOS (Skynet Installers)</title>
+    <meta name="description" content="Download Skynet, the satellite tracking app by Matteo Avigni: pass planning, rotor control and Doppler-corrected radio operation. Free installers for Windows 11 and macOS, plus the operator handbook.">
+    <link rel="canonical" href="https://skynet.matteo-avigni.com/">
+    <meta name="robots" content="index, follow">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Matteo Avigni">
+    <meta property="og:title" content="Download Skynet — satellite tracking for Windows and macOS">
+    <meta property="og:description" content="Satellite tracking, pass planning, rotor control and Doppler-corrected radio operation in one desktop app.">
+    <meta property="og:url" content="https://skynet.matteo-avigni.com/">
+    <meta property="og:image" content="https://skynet.matteo-avigni.com/assets/skynet-mark-transparent.png">
+    <meta name="twitter:card" content="summary">
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "Skynet",
+        "alternateName": ["Skynet satellite tracking", "Skynet Satellite Tracking System"],
+        "description": "Desktop satellite tracking application with pass planning, antenna rotor control and Doppler-corrected radio operation.",
+        "applicationCategory": "UtilitiesApplication",
+        "applicationSubCategory": "Satellite tracking",
+        "operatingSystem": "Windows 11, macOS",
+        "url": "https://skynet.matteo-avigni.com/",
+        "downloadUrl": "https://skynet.matteo-avigni.com/",
+        "image": "https://skynet.matteo-avigni.com/assets/skynet-mark-transparent.png",
+        "author": { "@type": "Person", "name": "Matteo Avigni", "url": "https://matteo-avigni.com/" },
+        "sameAs": ["https://matteo-avigni.com/projects/skynet/"]
+      }
+    </script>
+    <meta name="theme-color" content="#f6f6f4">
     <link rel="icon" type="image/png" href="assets/skynet-mark-transparent.png">
+    <link rel="preload" href="assets/fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
     <style>
+      @font-face {
+        font-family: Inter;
+        font-style: normal;
+        font-display: swap;
+        font-weight: 100 900;
+        src: url("assets/fonts/inter-latin-wght-normal.woff2") format("woff2-variations");
+        unicode-range: U+0-FF, U+131, U+152-153, U+2BB-2BC, U+2C6, U+2DA, U+2DC, U+304, U+308, U+329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+      }
+
+      @font-face {
+        font-family: Inter;
+        font-style: normal;
+        font-display: swap;
+        font-weight: 100 900;
+        src: url("assets/fonts/inter-latin-ext-wght-normal.woff2") format("woff2-variations");
+        unicode-range: U+100-2BA, U+2BD-2C5, U+2C7-2CC, U+2CE-2D7, U+2DD-2FF, U+1E00-1E9F, U+1EF2-1EFF, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+      }
+
+      /* Tokens mirror matteo-avigni.com (css/site.css :root). */
       :root {
-        color-scheme: dark;
-        --background: #101312;
-        --surface: #181d1b;
-        --border: #3b4641;
-        --text: #f4f7f5;
-        --muted: #aeb9b4;
-        --green: #36d477;
-        --green-strong: #1fb45e;
-        --blue: #6eb8ff;
+        color-scheme: light;
+        --bg: #f6f6f4;
+        --surface: #ffffff;
+        --ink: #111113;
+        --text: #1d1d1f;
+        --muted: #6e6e73;
+        --dim: #8a8a8f;
+        --line: #e4e4e2;
+        --line-2: #d4d4d2;
+        --accent: #ff5a1f;
+        --c-windows: #2f6bff;
+        --c-macos: #111113;
+        --c-docs: #12a37a;
+        --wrap: 1240px;
+        --gut: clamp(20px, 4vw, 40px);
+        --r: 22px;
+        --ease: cubic-bezier(.22, 1, .36, 1);
+        --ff: "Inter", -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+        --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        --shadow: 0 1px 2px rgba(17,17,19,.04), 0 8px 24px rgba(17,17,19,.06);
+        --shadow-lg: 0 2px 4px rgba(17,17,19,.04), 0 24px 60px rgba(17,17,19,.12);
       }
 
       * { box-sizing: border-box; }
 
+      html { -webkit-text-size-adjust: 100%; }
+
       body {
         margin: 0;
         min-height: 100vh;
-        background: var(--background);
-        color: var(--text);
-        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      }
-
-      main {
-        width: min(100% - 32px, 1040px);
-        margin: 0 auto;
-        padding: 42px 0 64px;
-      }
-
-      .masthead {
-        display: grid;
-        grid-template-columns: minmax(0, 1fr) minmax(300px, 440px);
-        gap: 32px;
-        align-items: center;
-        padding-bottom: 32px;
-        border-bottom: 1px solid var(--border);
-      }
-
-      .brand-lockup {
-        display: block;
-        width: 100%;
-        height: auto;
-        object-fit: contain;
-      }
-
-      h1, h2, p { margin: 0; }
-
-      h1 {
-        font-size: clamp(38px, 8vw, 62px);
-        line-height: 1;
-        letter-spacing: 0;
-      }
-
-      .lede {
-        max-width: 680px;
-        margin-top: 14px;
-        color: var(--muted);
-        font-size: 18px;
-        line-height: 1.55;
-      }
-
-      .release { margin-top: 32px; }
-
-      .release-header {
         display: flex;
-        flex-wrap: wrap;
-        gap: 12px 20px;
-        align-items: baseline;
-        justify-content: space-between;
+        flex-direction: column;
+        background: var(--bg);
+        color: var(--text);
+        font: 400 17px/1.55 var(--ff);
+        font-feature-settings: "cv11", "ss01", "ss03";
+        letter-spacing: -.011em;
+        -webkit-font-smoothing: antialiased;
+        overflow-x: hidden;
       }
 
-      h2 {
-        font-size: 25px;
-        line-height: 1.25;
-        letter-spacing: 0;
-      }
+      a { color: inherit; text-decoration: none; }
+      img, svg { display: block; max-width: 100%; }
+      h1, h2, h3, p, dl, dd { margin: 0; }
 
-      .version {
-        color: var(--green);
-        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-        font-size: 14px;
-        font-weight: 700;
-      }
-
-      .installer-grid {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 16px;
-        margin-top: 22px;
-      }
-
-      .installer {
-        min-width: 0;
-        padding: 22px;
-        border: 1px solid var(--border);
-        border-radius: 8px;
-        background: var(--surface);
-      }
-
-      .installer h3 {
-        margin: 0;
-        font-size: 20px;
-        letter-spacing: 0;
-      }
-
-      .installer p {
-        min-height: 48px;
-        margin-top: 8px;
-        color: var(--muted);
-        line-height: 1.5;
-      }
-
-      .download {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        min-height: 44px;
-        margin-top: 18px;
-        padding: 10px 16px;
-        border: 1px solid var(--green-strong);
-        border-radius: 6px;
-        background: var(--green);
-        color: #07120c;
-        font-weight: 800;
-        text-decoration: none;
-      }
-
-      .download:hover,
-      .download:focus-visible {
-        background: #55e68d;
-        outline: 2px solid var(--blue);
+      :focus-visible {
+        outline: 2px solid var(--accent);
         outline-offset: 3px;
       }
 
-      .download[aria-disabled="true"] {
-        border-color: var(--border);
-        background: #2a312e;
+      .wrap {
+        width: 100%;
+        max-width: var(--wrap);
+        margin-inline: auto;
+        padding-inline: var(--gut);
+      }
+
+      .ar { width: 15px; height: 15px; flex: none; transition: transform .35s var(--ease); }
+
+      /* Background */
+      .bg { position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; }
+      .blob { position: absolute; border-radius: 50%; filter: blur(70px); opacity: .55; }
+      .b1 { width: 46vw; height: 46vw; left: 50%; top: -14%; background: radial-gradient(circle, #ffd8c7, transparent 65%); }
+      .b2 { width: 38vw; height: 38vw; left: 66%; top: 34%; background: radial-gradient(circle, #d4e2ff, transparent 65%); }
+      .b3 { width: 30vw; height: 30vw; left: -6%; top: 58%; background: radial-gradient(circle, #e7f6ef, transparent 65%); }
+
+      @media (prefers-reduced-motion: no-preference) {
+        .b1 { animation: drift 18s ease-in-out infinite alternate; }
+        .b2 { animation: drift 22s ease-in-out infinite alternate-reverse; }
+        .b3 { animation: drift 26s ease-in-out infinite alternate; }
+        @keyframes drift { to { transform: translate3d(-4vw, 3vw, 0) scale(1.08); } }
+      }
+
+      /* Header */
+      .hdr { padding: 12px var(--gut) 0; }
+
+      .hdr-in {
+        max-width: calc(var(--wrap) - 2 * var(--gut));
+        height: 64px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        padding: 0 10px 0 12px;
+        border-radius: 20px;
+        background: rgba(255,255,255,.74);
+        backdrop-filter: saturate(1.6) blur(20px);
+        -webkit-backdrop-filter: saturate(1.6) blur(20px);
+        box-shadow: 0 0 0 1px rgba(17,17,19,.06), 0 10px 34px rgba(17,17,19,.07);
+      }
+
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: .65rem;
+        font-weight: 650;
+        letter-spacing: -.02em;
+        white-space: nowrap;
+      }
+
+      .logo-mark {
+        width: 38px;
+        height: 38px;
+        display: grid;
+        place-items: center;
+        flex: none;
+        border-radius: 12px;
+        background: var(--ink);
+        color: #fff;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: .02em;
+        transition: transform .6s var(--ease);
+      }
+
+      .logo:hover .logo-mark { transform: rotate(-8deg); }
+
+      .nav-cta {
+        display: inline-flex;
+        align-items: center;
+        gap: .45rem;
+        height: 42px;
+        padding: 0 18px;
+        border-radius: 12px;
+        background: var(--ink);
+        color: #fff;
+        font-size: 15px;
+        font-weight: 550;
+        white-space: nowrap;
+        transition: background .2s;
+      }
+
+      .nav-cta:hover { background: #000; }
+      .nav-cta:hover .ar { transform: translate(2px, -2px); }
+
+      /* Hero */
+      .hero {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 2rem 3rem;
+        align-items: center;
+        padding-top: clamp(3.5rem, 8vw, 6.5rem);
+        padding-bottom: clamp(2.5rem, 5vw, 4rem);
+      }
+
+      .crumbs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: .5rem;
+        margin-bottom: 1.75rem;
+        font-size: 14px;
+        color: var(--dim);
+      }
+
+      .crumbs a:hover { color: var(--ink); }
+      .crumbs [aria-current] { color: var(--text); }
+
+      .status {
+        display: inline-flex;
+        align-items: center;
+        gap: .6rem;
+        margin-bottom: 1.75rem;
+        padding: 8px 16px 8px 12px;
+        border-radius: 999px;
+        background: rgba(255,255,255,.75);
+        box-shadow: 0 0 0 1px rgba(17,17,19,.06);
+        font-size: 14px;
+        font-weight: 500;
+        backdrop-filter: blur(8px);
+      }
+
+      .pulse {
+        position: relative;
+        width: 8px;
+        height: 8px;
+        flex: none;
+        border-radius: 50%;
+        background: var(--dim);
+      }
+
+      .status.is-live .pulse { background: #22c55e; }
+
+      @media (prefers-reduced-motion: no-preference) {
+        .status.is-live .pulse::after {
+          content: "";
+          position: absolute;
+          inset: 0;
+          border-radius: 50%;
+          background: inherit;
+          animation: ping 2s var(--ease) infinite;
+        }
+        @keyframes ping { to { transform: scale(2.6); opacity: 0; } }
+      }
+
+      .version { font-family: var(--mono); font-size: 13px; color: var(--muted); }
+
+      .hero-h {
+        font-size: clamp(3rem, 9vw, 7rem);
+        line-height: .92;
+        font-weight: 700;
+        letter-spacing: -.055em;
+      }
+
+      .hero-h span { display: block; color: #b8b8bc; }
+      .hero-h i { font-style: normal; color: var(--accent); }
+
+      .hero-p {
+        max-width: 38rem;
+        margin-top: 1.5rem;
         color: var(--muted);
+        font-size: clamp(1.1rem, 1.6vw, 1.3rem);
+        line-height: 1.5;
+      }
+
+      .hero-mark {
+        width: clamp(150px, 20vw, 240px);
+        aspect-ratio: 1;
+        display: grid;
+        place-items: center;
+        border-radius: 40px;
+        background: var(--surface);
+        box-shadow: var(--shadow-lg);
+        transform: rotate(4deg);
+      }
+
+      .hero-mark img { width: 64%; height: auto; }
+
+      /* Entries */
+      .release { padding-bottom: clamp(4rem, 8vw, 7rem); }
+
+      .release-head {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: .5rem 1.5rem;
+        margin-bottom: 1.25rem;
+      }
+
+      .release-h {
+        font-size: clamp(1.5rem, 2.4vw, 1.9rem);
+        line-height: 1.1;
+        font-weight: 650;
+        letter-spacing: -.035em;
+      }
+
+      .release-meta { font-size: 14px; color: var(--dim); }
+
+      .entries {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+        padding: 0;
+        margin: 0;
+        list-style: none;
+      }
+
+      .entry {
+        position: relative;
+        display: grid;
+        grid-template-rows: subgrid;
+        grid-row: span 3;
+        row-gap: 0;
+        min-width: 0;
+        padding: 1.5rem;
+        border-radius: 24px;
+        background: var(--surface);
+        box-shadow: var(--shadow);
+        overflow: hidden;
+        isolation: isolate;
+        transition: transform .6s var(--ease), box-shadow .6s var(--ease);
+      }
+
+      .entry::before {
+        content: "";
+        position: absolute;
+        z-index: -1;
+        right: -30%;
+        top: -40%;
+        width: 90%;
+        aspect-ratio: 1;
+        border-radius: 50%;
+        background: radial-gradient(circle, color-mix(in srgb, var(--c) 20%, transparent), transparent 65%);
+        opacity: .6;
+        transition: transform .9s var(--ease), opacity .6s;
+      }
+
+      .entry-top { grid-row: 1; }
+      .entry-h { grid-row: 2; align-self: end; }
+      .get { grid-row: 3; }
+
+      .entry:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); }
+      .entry:hover::before { transform: scale(1.15); opacity: 1; }
+
+      .entry-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 12px;
+        border-radius: 99px;
+        background: color-mix(in srgb, var(--c) 9%, white);
+        color: color-mix(in srgb, var(--c) 75%, black);
+        font-size: 13px;
+        font-weight: 600;
+        white-space: nowrap;
+      }
+
+      .chip::before {
+        content: "";
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--c);
+      }
+
+      .entry-h {
+        font-size: clamp(1.75rem, 2.6vw, 2.25rem);
+        line-height: 1;
+        font-weight: 700;
+        letter-spacing: -.05em;
+      }
+
+      .note {
+        margin-top: 1rem;
+        color: var(--dim);
+        font-size: 13px;
+        line-height: 1.45;
+      }
+
+
+      .get {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: .55rem;
+        align-self: end;
+        justify-self: start;
+        min-height: 50px;
+        margin-top: 1.5rem;
+        padding: 0 24px;
+        border-radius: 999px;
+        background: var(--ink);
+        color: #fff;
+        font-size: 15px;
+        font-weight: 550;
+        box-shadow: 0 6px 20px rgba(17,17,19,.18);
+        transition: background .3s, box-shadow .3s, transform .35s var(--ease);
+      }
+
+      .entry:hover .get { background: var(--c); }
+      .get:hover { box-shadow: 0 10px 30px rgba(17,17,19,.25); }
+      .get:hover .ar { transform: translateY(2px); }
+      .get:active { transform: scale(.98); }
+
+      .get[aria-disabled="true"] {
+        background: var(--surface);
+        color: var(--dim);
+        box-shadow: inset 0 0 0 1px var(--line-2);
         pointer-events: none;
       }
 
+      .get[aria-disabled="true"] .ar { display: none; }
+
+      /* Footer */
+      .ftr { margin-top: auto; border-top: 1px solid var(--line); }
+
+      .ftr-in {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem 2rem;
+        padding-block: 1.5rem;
+        font-size: 14px;
+        color: var(--muted);
+      }
+
+      .ftr-left { display: flex; align-items: center; gap: .75rem; }
+      .ftr-left .logo-mark { width: 30px; height: 30px; border-radius: 9px; font-size: 10px; }
+      .ftr nav { display: flex; flex-wrap: wrap; gap: .5rem 1.5rem; }
+      .ftr nav a:hover { color: var(--ink); }
+
+      @media (max-width: 1000px) {
+        .entries { grid-template-columns: 1fr; }
+        .entry { grid-template-rows: none; grid-row: auto; }
+        .entry > * { grid-row: auto; }
+      }
+
       @media (max-width: 700px) {
-        main {
-          width: min(100% - 24px, 1040px);
-          padding-top: 24px;
-        }
+        .hero { grid-template-columns: 1fr; }
+        .hero-mark { display: none; }
+        .logo-name { display: none; }
+        .entry { padding: 1.4rem; }
+      }
 
-        .masthead {
-          grid-template-columns: 1fr;
-          gap: 24px;
-        }
-
-        .brand-lockup {
-          width: min(100%, 440px);
-        }
-
-        .installer-grid { grid-template-columns: 1fr; }
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after { transition: none !important; }
       }
     </style>
   </head>
   <body>
+    <div class="bg" aria-hidden="true"><span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span></div>
+
+    <header class="hdr">
+      <div class="hdr-in">
+        <a class="logo" href="https://matteo-avigni.com/" aria-label="Matteo Avigni, portfolio home">
+          <span class="logo-mark" aria-hidden="true">MA</span><span class="logo-name">Matteo Avigni</span>
+        </a>
+        <a class="nav-cta" href="https://matteo-avigni.com/projects/skynet/">
+          About Skynet
+          <svg class="ar" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 11 11 5M6 4.5h5.5V10" fill="none" stroke="currentColor" stroke-width="1.4"/></svg>
+        </a>
+      </div>
+    </header>
+
     <main>
-      <header class="masthead">
+      <section class="wrap hero" aria-labelledby="page-title">
         <div>
-          <h1>Skynet Installers</h1>
-          <p class="lede">Official installation packages for Windows 11 and macOS.</p>
+          <nav class="crumbs" aria-label="Breadcrumb">
+            <a href="https://matteo-avigni.com/projects/">Projects</a><span aria-hidden="true">/</span>
+            <a href="https://matteo-avigni.com/projects/skynet/">Skynet</a><span aria-hidden="true">/</span>
+            <span aria-current="page">Downloads</span>
+          </nav>
+          <p id="status" class="status" role="status">
+            <span class="pulse" aria-hidden="true"></span>
+            <span id="version" class="version">Checking availability</span>
+          </p>
+          <h1 id="page-title" class="hero-h">Download <span>Skynet<i>.</i></span></h1>
+          <p class="hero-p">Skynet is a satellite tracking app for pass planning, rotor control and Doppler-corrected radio operation. Free installers for Windows 11 and macOS.</p>
         </div>
-        <img class="brand-lockup" src="assets/skynet-lockup-transparent.png" alt="Skynet Satellite Tracking System">
-      </header>
-
-      <section class="release" aria-labelledby="release-title">
-        <div class="release-header">
-          <h2 id="release-title">Current version</h2>
-          <span id="version" class="version">Checking availability</span>
-        </div>
-        <div id="installers" class="installer-grid">
-          <article class="installer">
-            <h3>Windows 11</h3>
-            <p id="windows-description">x64 installation wizard.</p>
-            <a id="windows-download" class="download" aria-disabled="true">Pending build</a>
-          </article>
-
-          <article class="installer">
-            <h3>macOS</h3>
-            <p>Developer ID signed, notarized universal installer.</p>
-            <a id="macos-download" class="download" aria-disabled="true">Pending build</a>
-          </article>
+        <div class="hero-mark" aria-hidden="true">
+          <img src="assets/skynet-mark-transparent.png" alt="" width="160" height="160">
         </div>
       </section>
 
+      <section class="wrap release" aria-labelledby="release-title">
+        <div class="release-head">
+          <h2 id="release-title" class="release-h">Current release</h2>
+          <p id="published" class="release-meta"></p>
+        </div>
+
+        <ul id="installers" class="entries">
+          <li id="windows-entry" class="entry" style="--c: var(--c-windows)">
+            <div class="entry-top"><span class="chip">Installer · MSI</span></div>
+            <h3 class="entry-h">Windows 11</h3>
+            <a id="windows-download" class="get" aria-disabled="true">Pending build<svg class="ar" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3v9M4 8.5 8 12.5l4-4" fill="none" stroke="currentColor" stroke-width="1.4"/></svg></a>
+          </li>
+
+          <li id="macos-entry" class="entry" style="--c: var(--c-macos)">
+            <div class="entry-top"><span class="chip">Installer · PKG</span></div>
+            <h3 class="entry-h">macOS</h3>
+            <a id="macos-download" class="get" aria-disabled="true">Pending build<svg class="ar" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3v9M4 8.5 8 12.5l4-4" fill="none" stroke="currentColor" stroke-width="1.4"/></svg></a>
+          </li>
+
+          <li class="entry" style="--c: var(--c-docs)">
+            <div class="entry-top"><span class="chip">Handbook · PDF</span></div>
+            <h3 class="entry-h">Operator handbook</h3>
+            <a class="get" href="docs/Skynet-Operator-Handbook.pdf" download>Download PDF<svg class="ar" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3v9M4 8.5 8 12.5l4-4" fill="none" stroke="currentColor" stroke-width="1.4"/></svg></a>
+          </li>
+        </ul>
+        <p id="unsigned-note" class="note" hidden>The Windows build is not code-signed yet. If SmartScreen warns about an unknown publisher, choose “More info”, then “Run anyway”.</p>
+      </section>
     </main>
 
+    <footer class="ftr">
+      <div class="wrap ftr-in">
+        <div class="ftr-left"><span class="logo-mark" aria-hidden="true">MA</span><span>© 2026 Matteo Avigni</span></div>
+        <nav aria-label="Footer">
+          <a href="https://matteo-avigni.com/">Portfolio</a>
+          <a href="https://matteo-avigni.com/projects/skynet/">Skynet project</a>
+        </nav>
+      </div>
+    </footer>
+
     <script>
+      const statusElement = document.getElementById("status");
       const versionElement = document.getElementById("version");
+      const publishedElement = document.getElementById("published");
+
+      const setLabel = (link, text) => {
+        link.firstChild.textContent = text;
+      };
 
       fetch("downloads/latest.json", { cache: "no-store" })
         .then((response) => {
@@ -218,25 +564,32 @@
             throw new Error("No installers in manifest");
           }
 
+          statusElement.classList.add("is-live");
+          const published = release.publishedUtc ? new Date(release.publishedUtc) : null;
+          if (published && !Number.isNaN(published.getTime())) {
+            publishedElement.textContent = `Published ${published.toLocaleDateString("en-GB", {
+              day: "numeric",
+              month: "short",
+              year: "numeric",
+              timeZone: "UTC",
+            })}`;
+          }
+
           const windowsDownload = document.getElementById("windows-download");
-          const windowsDescription = document.getElementById("windows-description");
           const windowsSigned = release.windows?.signed !== false;
           if (windowsAvailable) {
             windowsDownload.href = release.windows.path;
-            windowsDownload.textContent = windowsSigned ? "Download MSI" : "Download unsigned MSI";
-            windowsDescription.textContent = windowsSigned
-              ? "Authenticode-signed x64 installation wizard."
-              : "Unsigned x64 installation wizard. Windows may show an unknown-publisher warning.";
+            setLabel(windowsDownload, windowsSigned ? "Download MSI" : "Download unsigned MSI");
+            document.getElementById("unsigned-note").hidden = windowsSigned;
             windowsDownload.removeAttribute("aria-disabled");
           }
 
           const macosDownload = document.getElementById("macos-download");
           if (macosAvailable) {
             macosDownload.href = release.macos.path;
-            macosDownload.textContent = "Download PKG";
+            setLabel(macosDownload, "Download PKG");
             macosDownload.removeAttribute("aria-disabled");
           }
-
         })
         .catch(() => {
           versionElement.textContent = "Publication pending";

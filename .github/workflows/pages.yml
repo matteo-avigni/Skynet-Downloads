@@ -35,6 +35,7 @@ jobs:
           cp index.html _site/
           cp .nojekyll _site/
           cp -R assets _site/
+          cp -R docs _site/
           cp -R downloads _site/
           if [ -d updates ]; then
             cp -R updates _site/

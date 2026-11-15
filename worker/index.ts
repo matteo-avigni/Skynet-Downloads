@@ -6,6 +6,7 @@ const ADMIN_API_PREFIX = "/api/admin/";
 const GITHUB_REPOSITORY = "matteo-avigni/Skynet";
 const GITHUB_WORKFLOW = "publish-update-feeds.yml";
 const PUBLIC_ORIGIN = "https://skynet.matteo-avigni.com";
+const PORTFOLIO_ORIGIN = "https://matteo-avigni.com";
 const MAX_INSTALLER_SIZE = 100_000_000;
 const VERSION_PATTERN = /^\d+\.\d+\.\d+$/;
 const BUILD_PATTERN = /^[0-9a-f]{7}$/;
@@ -222,6 +223,10 @@ function metadataHeaders(object: R2Object, key: string): Headers {
   headers.set("Content-Length", String(object.size));
   headers.set("Content-Type", metadataContentType(key));
   headers.set("ETag", object.httpEtag);
+  // Lets the portfolio's /skynet-downloads/ page read the current release.
+  if (key === "downloads/latest.json") {
+    headers.set("Access-Control-Allow-Origin", PORTFOLIO_ORIGIN);
+  }
   return securityHeaders(headers);
 }
 

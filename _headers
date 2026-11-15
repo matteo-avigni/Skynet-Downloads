@@ -7,3 +7,6 @@
   X-Content-Type-Options: nosniff
   X-Frame-Options: DENY
 
+/docs/*
+  Content-Disposition: attachment
+  Cache-Control: public, max-age=3600
