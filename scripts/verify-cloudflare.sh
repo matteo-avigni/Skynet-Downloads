@@ -7,6 +7,7 @@ trap 'rm -rf "$work_dir"' EXIT
 
 curl -fsS "$base_url/" -o "$work_dir/index.html"
 grep -F "Skynet Installers" "$work_dir/index.html" >/dev/null
+grep -F 'id="linux-download"' "$work_dir/index.html" >/dev/null
 grep -F "docs/Skynet-Operator-Handbook.pdf" "$work_dir/index.html" >/dev/null
 
 curl -fsS -D "$work_dir/handbook-headers" -o "$work_dir/handbook.pdf" \
@@ -16,10 +17,11 @@ grep -Eiq '^content-disposition: attachment' "$work_dir/handbook-headers"
 test "$(head -c 5 "$work_dir/handbook.pdf")" = "%PDF-"
 
 curl -fsS "$base_url/downloads/latest.json" -o "$work_dir/latest.json"
-jq -e '.version and .build and .windows.path and .macos.path' "$work_dir/latest.json" >/dev/null
+jq -e '.version and .build and .windows.path and .macos.path and .linux.path' "$work_dir/latest.json" >/dev/null
 
 verify_installer() {
   local url="$1"
+  local expected_content_type="$2"
   local headers="$work_dir/headers"
 
   case "$url" in
@@ -31,6 +33,7 @@ verify_installer() {
   esac
 
   curl -fsSI "$url" -o "$headers"
+  grep -Fiq "content-type: $expected_content_type" "$headers"
   grep -Eiq '^content-length: [1-9][0-9]*' "$headers"
   grep -Eiq '^content-disposition: attachment;' "$headers"
   grep -Eiq '^accept-ranges: bytes' "$headers"
@@ -41,8 +44,9 @@ verify_installer() {
   test "$(wc -c < "$work_dir/range.bin" | tr -d ' ')" = 32
 }
 
-verify_installer "$(jq -er '.windows.path' "$work_dir/latest.json")"
-verify_installer "$(jq -er '.macos.path' "$work_dir/latest.json")"
+verify_installer "$(jq -er '.windows.path' "$work_dir/latest.json")" "application/x-msi"
+verify_installer "$(jq -er '.macos.path' "$work_dir/latest.json")" "application/vnd.apple.installer+xml"
+verify_installer "$(jq -er '.linux.path' "$work_dir/latest.json")" "application/vnd.debian.binary-package"
 
 for feed in appcast.xml appcast-macos.xml; do
   curl -fsS "$base_url/updates/$feed" -o "$work_dir/$feed"

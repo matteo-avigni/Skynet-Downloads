@@ -99,7 +99,10 @@
         gap: 16px;
         margin-top: 18px;
       }
-      .file-grid { margin-top: 16px; }
+      .file-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        margin-top: 16px;
+      }
       .check-row { display: flex; gap: 10px; align-items: center; margin-top: 16px; color: var(--muted); }
       .check-row input { width: 18px; height: 18px; accent-color: var(--green); }
       .check-row label { margin: 0; font-size: 14px; }
@@ -183,6 +186,10 @@
             <div>
               <label for="macos-installer">macOS PKG</label>
               <input id="macos-installer" type="file" accept=".pkg,application/vnd.apple.installer+xml" required>
+            </div>
+            <div>
+              <label for="linux-installer">Linux DEB</label>
+              <input id="linux-installer" type="file" accept=".deb,application/vnd.debian.binary-package" required>
             </div>
           </div>
           <div class="check-row">
@@ -278,7 +285,7 @@
         const release = await response.json();
         document.getElementById("version").textContent = `v${release.version} (${release.build})`;
         const windowsState = release.windows?.signed === false ? "unsigned Windows" : "signed Windows";
-        document.getElementById("release-detail").textContent = `${windowsState} and notarized macOS installers`;
+        document.getElementById("release-detail").textContent = `${windowsState}, notarized macOS, and Linux x64 installers`;
       }
 
       function runState(run) {
@@ -321,7 +328,9 @@
       }
 
       function expectedInstallerName(platform, version) {
-        return platform === "windows" ? "skynet-win-x64.msi" : `skynet-${version}-macos-universal.pkg`;
+        if (platform === "windows") return "skynet-win-x64.msi";
+        if (platform === "macos") return `skynet-${version}-macos-universal.pkg`;
+        return `skynet-${version}-linux-x64.deb`;
       }
 
       async function uploadInstaller(platform, file, version, build) {
@@ -347,11 +356,12 @@
         const build = document.getElementById("package-build").value.trim().toLowerCase();
         const windowsFile = document.getElementById("windows-installer").files[0];
         const macosFile = document.getElementById("macos-installer").files[0];
+        const linuxFile = document.getElementById("linux-installer").files[0];
         if (!/^\d+\.\d+\.\d+$/.test(version) || !/^[0-9a-f]{7}$/.test(build)) {
           status(packagesMessage, "Enter a semantic version and seven-character commit.", "error");
           return;
         }
-        if (!windowsFile || !macosFile) return;
+        if (!windowsFile || !macosFile || !linuxFile) return;
 
         packagesButton.disabled = true;
         try {
@@ -359,6 +369,8 @@
           await uploadInstaller("windows", windowsFile, version, build);
           status(packagesMessage, "Uploading macOS PKG");
           await uploadInstaller("macos", macosFile, version, build);
+          status(packagesMessage, "Uploading Linux DEB");
+          await uploadInstaller("linux", linuxFile, version, build);
           status(packagesMessage, "Publishing package manifest");
           await adminRequest("../api/admin/packages/publish", {
             method: "POST",

@@ -10,8 +10,8 @@ Pages site mirrors only signed feed metadata for older Skynet builds that still
 use the legacy update URL.
 
 Publication is intentionally limited to the Windows MSI, the Developer ID
-signed and notarized macOS PKG, signed update-feed metadata, and the PDF
-operator handbook in `docs/`. This repository
+signed and notarized macOS PKG, the Linux x64 Debian package, signed
+update-feed metadata, and the PDF operator handbook in `docs/`. This repository
 does not use GitHub Releases or publish application source. The Skynet
 application source remains private.
 

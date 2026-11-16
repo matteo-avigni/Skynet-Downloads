@@ -21,6 +21,7 @@ upload_artifact() {
   case "$file" in
     *.msi) content_type="application/x-msi" ;;
     *.pkg) content_type="application/vnd.apple.installer+xml" ;;
+    *.deb) content_type="application/vnd.debian.binary-package" ;;
     *.zip) content_type="application/zip" ;;
     *)
       echo "Refusing unsupported public artifact: $file" >&2
@@ -74,11 +75,11 @@ manifest_path_to_file() {
 if [[ "$mode" == "--all" ]]; then
   while IFS= read -r file; do
     upload_artifact "$file"
-  done < <(find downloads -type f \( -name '*.msi' -o -name '*.pkg' -o -name '*.zip' \) | sort)
+  done < <(find downloads -type f \( -name '*.msi' -o -name '*.pkg' -o -name '*.deb' -o -name '*.zip' \) | sort)
 else
   while IFS= read -r manifest_path; do
     upload_artifact "$(manifest_path_to_file "$manifest_path")"
-  done < <(jq -er '.windows.path, .macos.path' downloads/latest.json)
+  done < <(jq -er '.windows.path, .macos.path, .linux.path' downloads/latest.json)
 fi
 
 upload_metadata downloads/latest.json

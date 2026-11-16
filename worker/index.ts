@@ -1,5 +1,5 @@
 const INSTALLER_PATH =
-  /^downloads\/v\d+\.\d+\.\d+-[0-9a-f]{7}\/[A-Za-z0-9][A-Za-z0-9._-]*\.(msi|pkg|zip)$/;
+  /^downloads\/v\d+\.\d+\.\d+-[0-9a-f]{7}\/[A-Za-z0-9][A-Za-z0-9._-]*\.(msi|pkg|deb|zip)$/;
 const METADATA_PATH =
   /^(downloads\/latest\.json|updates\/appcast(?:-macos)?\.xml(?:\.signature)?)$/;
 const ADMIN_API_PREFIX = "/api/admin/";
@@ -36,7 +36,7 @@ type GitHubWorkflowRunsResponse = {
   workflow_runs: GitHubWorkflowRun[];
 };
 
-type InstallerPlatform = "windows" | "macos";
+type InstallerPlatform = "windows" | "macos" | "linux";
 
 type ReleaseManifest = {
   version: string;
@@ -48,6 +48,9 @@ type ReleaseManifest = {
     signed: boolean;
   };
   macos: {
+    path: string;
+  };
+  linux: {
     path: string;
   };
 };
@@ -96,9 +99,9 @@ function releaseIdentity(versionValue: string | null, buildValue: string | null)
 }
 
 function installerFilename(platform: InstallerPlatform, version: string): string {
-  return platform === "windows"
-    ? "skynet-win-x64.msi"
-    : `skynet-${version}-macos-universal.pkg`;
+  if (platform === "windows") return "skynet-win-x64.msi";
+  if (platform === "macos") return `skynet-${version}-macos-universal.pkg`;
+  return `skynet-${version}-linux-x64.deb`;
 }
 
 function installerKey(platform: InstallerPlatform, version: string, tag: string): string {
@@ -106,7 +109,7 @@ function installerKey(platform: InstallerPlatform, version: string, tag: string)
 }
 
 function parsePlatform(value: string | null): InstallerPlatform | null {
-  return value === "windows" || value === "macos" ? value : null;
+  return value === "windows" || value === "macos" || value === "linux" ? value : null;
 }
 
 function compareVersions(left: string, right: string): number {
@@ -452,7 +455,9 @@ async function uploadInstaller(
 
   const contentType = platform === "windows"
     ? "application/x-msi"
-    : "application/vnd.apple.installer+xml";
+    : platform === "macos"
+      ? "application/vnd.apple.installer+xml"
+      : "application/vnd.debian.binary-package";
   await env.INSTALLERS.put(key, request.body, {
     httpMetadata: {
       contentType,
@@ -490,12 +495,14 @@ async function publishPackages(request: Request, env: WorkerEnv): Promise<Respon
 
   const windowsKey = installerKey("windows", identity.version, identity.tag);
   const macosKey = installerKey("macos", identity.version, identity.tag);
-  const [windowsObject, macosObject] = await Promise.all([
+  const linuxKey = installerKey("linux", identity.version, identity.tag);
+  const [windowsObject, macosObject, linuxObject] = await Promise.all([
     env.INSTALLERS.head(windowsKey),
     env.INSTALLERS.head(macosKey),
+    env.INSTALLERS.head(linuxKey),
   ]);
-  if (windowsObject === null || macosObject === null) {
-    return errorResponse("Both the Windows MSI and macOS PKG must be uploaded before publishing.", 409);
+  if (windowsObject === null || macosObject === null || linuxObject === null) {
+    return errorResponse("The Windows MSI, macOS PKG, and Linux DEB must be uploaded before publishing.", 409);
   }
 
   const manifest: ReleaseManifest = {
@@ -509,6 +516,9 @@ async function publishPackages(request: Request, env: WorkerEnv): Promise<Respon
     },
     macos: {
       path: `${PUBLIC_ORIGIN}/${macosKey}`,
+    },
+    linux: {
+      path: `${PUBLIC_ORIGIN}/${linuxKey}`,
     },
   };
   await env.INSTALLERS.put(

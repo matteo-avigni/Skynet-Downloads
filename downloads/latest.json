@@ -3,12 +3,15 @@
   "build": "89d480a",
   "tag": "v0.1.14-89d480a",
   "sourceRevision": "89d480a5a9a98f73ccbb680d9cee9f38c863b88f",
-  "publishedUtc": "2026-11-16T17:48:44Z",
+  "publishedUtc": "2026-11-16T18:46:33Z",
   "windows": {
     "path": "https://skynet.matteo-avigni.com/downloads/v0.1.14-89d480a/skynet-win-x64.msi",
     "signed": false
   },
   "macos": {
     "path": "https://skynet.matteo-avigni.com/downloads/v0.1.14-89d480a/skynet-0.1.14-macos-universal.pkg"
+  },
+  "linux": {
+    "path": "https://skynet.matteo-avigni.com/downloads/v0.1.14-89d480a/skynet-0.1.14-linux-x64.deb"
   }
 }
