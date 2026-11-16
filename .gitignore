@@ -1,6 +1,8 @@
 node_modules/
 .wrangler/
 worker-configuration.d.ts
+.DS_Store
+**/.DS_Store
 downloads/**/*.msi
 downloads/**/*.pkg
 downloads/**/*.deb
