@@ -6,11 +6,11 @@
     <description>Skynet stable updates</description>
     <language>en</language>
     <item>
-      <title>Skynet 0.1.11</title>
-      <pubDate>Mon, 16 Nov 2026 07:10:08 +00:00</pubDate>
-      <sparkle:version>0.1.11</sparkle:version>
-      <sparkle:shortVersionString>0.1.11</sparkle:shortVersionString>
-      <enclosure url="https://skynet.matteo-avigni.com/downloads/v0.1.11-6931901/skynet-0.1.11-macos-universal.pkg" sparkle:version="0.1.11" sparkle:shortVersionString="0.1.11" length="100844814" sparkle:os="macos" type="application/octet-stream" sparkle:criticalUpdate="false" sparkle:signature="oQM7i/wVhWBER8p4xWJaEfSqAVnHchifK7zzcWffddIdilhzfh3xdVv5auv0YsGtANuoITtRCrZtoxUvn5hcBw==" />
+      <title>Skynet 0.1.14</title>
+      <pubDate>Mon, 16 Nov 2026 18:10:25 +00:00</pubDate>
+      <sparkle:version>0.1.14</sparkle:version>
+      <sparkle:shortVersionString>0.1.14</sparkle:shortVersionString>
+      <enclosure url="https://skynet.matteo-avigni.com/downloads/v0.1.14-89d480a/skynet-0.1.14-macos-universal.pkg" sparkle:version="0.1.14" sparkle:shortVersionString="0.1.14" length="100791065" sparkle:os="macos" type="application/octet-stream" sparkle:criticalUpdate="false" sparkle:signature="ytrzNFQRtoZbzNUyZbIpfSBu1zgaO6rFN7Pi3XBOBpBytMLoaXVnNvfJPk6iK/XgolzPlleXNlGuMa5zYRGcBw==" />
     </item>
   </channel>
 </rss>

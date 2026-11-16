@@ -6,11 +6,11 @@
     <description>Skynet stable updates</description>
     <language>en</language>
     <item>
-      <title>Skynet 0.1.11</title>
-      <pubDate>Mon, 16 Nov 2026 07:10:06 +00:00</pubDate>
-      <sparkle:version>0.1.11</sparkle:version>
-      <sparkle:shortVersionString>0.1.11</sparkle:shortVersionString>
-      <enclosure url="https://skynet.matteo-avigni.com/downloads/v0.1.11-6931901/skynet-win-x64.msi" sparkle:version="0.1.11" sparkle:shortVersionString="0.1.11" length="43783940" sparkle:os="windows-x64" type="application/octet-stream" sparkle:criticalUpdate="false" sparkle:signature="bQ3iZI/aqZ8vTGmSq6JqAro6E3z4UfcjewdXGcyAQelzSLdNEeiyaXiCU9n5W03FmCQ5WzdsGdH90xSc5M6tDQ==" />
+      <title>Skynet 0.1.14</title>
+      <pubDate>Mon, 16 Nov 2026 18:10:23 +00:00</pubDate>
+      <sparkle:version>0.1.14</sparkle:version>
+      <sparkle:shortVersionString>0.1.14</sparkle:shortVersionString>
+      <enclosure url="https://skynet.matteo-avigni.com/downloads/v0.1.14-89d480a/skynet-win-x64.msi" sparkle:version="0.1.14" sparkle:shortVersionString="0.1.14" length="43779844" sparkle:os="windows-x64" type="application/octet-stream" sparkle:criticalUpdate="false" sparkle:signature="w3boOuE4LNFS5EEtZdsK3n1pcLhqOSAVTq1rXsUev3KBzKR8Z0061GOoX/aNyjAMhexOT11M1SgfecmDJWN3Ag==" />
     </item>
   </channel>
 </rss>
