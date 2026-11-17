@@ -3,11 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "check": "npm run types && npm run typecheck && npm run deploy:dry-run",
+    "check": "npm test && npm run types && npm run typecheck && npm run deploy:dry-run",
     "deploy": "wrangler deploy",
     "deploy:dry-run": "wrangler deploy --dry-run",
     "publish:all": "bash scripts/publish-cloudflare.sh --all",
     "publish:current": "bash scripts/publish-cloudflare.sh",
+    "test": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test tests/*.test.mjs",
     "typecheck": "tsc --noEmit",
     "types": "wrangler types",
     "verify": "bash scripts/verify-cloudflare.sh"

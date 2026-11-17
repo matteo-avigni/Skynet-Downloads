@@ -29,6 +29,15 @@
       "bucket_name": "skynet-downloads"
     }
   ],
+  "analytics_engine_datasets": [
+    {
+      "binding": "DOWNLOAD_ANALYTICS",
+      "dataset": "skynet_downloads"
+    }
+  ],
+  "analytics": {
+    "binding": "ANALYTICS_SQL"
+  },
   "observability": {
     "enabled": true,
     "head_sampling_rate": 0.1

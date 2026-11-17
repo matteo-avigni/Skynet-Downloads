@@ -38,7 +38,8 @@ verify_installer() {
   grep -Eiq '^content-disposition: attachment;' "$headers"
   grep -Eiq '^accept-ranges: bytes' "$headers"
 
-  curl -fsS -D "$headers" -o "$work_dir/range.bin" -H 'Range: bytes=0-31' "$url"
+  curl -fsS -D "$headers" -o "$work_dir/range.bin" \
+    -H 'Range: bytes=0-31' -H 'X-Skynet-Verification: 1' "$url"
   grep -Eiq '^HTTP/[^ ]+ 206' "$headers"
   grep -Eiq '^content-length: 32' "$headers"
   test "$(wc -c < "$work_dir/range.bin" | tr -d ' ')" = 32
@@ -61,6 +62,7 @@ grep -F "Skynet Release Control" "$work_dir/admin.html" >/dev/null
 grep -F "Admin password" "$work_dir/admin.html" >/dev/null
 grep -F "Publish installer packages" "$work_dir/admin.html" >/dev/null
 grep -F "Publish updater feeds" "$work_dir/admin.html" >/dev/null
+grep -F "Installer download starts" "$work_dir/admin.html" >/dev/null
 test "$(curl -sS -o /dev/null -w '%{http_code}' "$base_url/api/admin/session")" = 401
 
 test "$(curl -sS -o /dev/null -w '%{http_code}' "$base_url/.gitignore")" = 404

@@ -1,5 +1,10 @@
-const INSTALLER_PATH =
-  /^downloads\/v\d+\.\d+\.\d+-[0-9a-f]{7}\/[A-Za-z0-9][A-Za-z0-9._-]*\.(msi|pkg|deb|zip)$/;
+import {
+  downloadDataPoint,
+  INSTALLER_PATH,
+  type DownloadPlatform,
+  type DownloadRange,
+} from "./download-analytics";
+
 const METADATA_PATH =
   /^(downloads\/latest\.json|updates\/appcast(?:-macos)?\.xml(?:\.signature)?)$/;
 const ADMIN_API_PREFIX = "/api/admin/";
@@ -14,11 +19,6 @@ const BUILD_PATTERN = /^[0-9a-f]{7}$/;
 type WorkerEnv = Env & {
   GITHUB_WORKFLOW_TOKEN?: string;
   SKYNET_ADMIN_TOKEN?: string;
-};
-
-type ByteRange = {
-  offset: number;
-  length: number;
 };
 
 type GitHubWorkflowRun = {
@@ -37,6 +37,15 @@ type GitHubWorkflowRunsResponse = {
 };
 
 type InstallerPlatform = "windows" | "macos" | "linux";
+
+type DownloadAnalyticsRow = {
+  release: string;
+  platform: DownloadPlatform;
+  version: string;
+  build: string;
+  starts: number;
+  bytesServed: number;
+};
 
 type ReleaseManifest = {
   version: string;
@@ -161,7 +170,7 @@ function decodePublicKey(pathname: string): string | null {
   }
 }
 
-function parseByteRange(value: string | null, size: number): ByteRange | null | false {
+function parseByteRange(value: string | null, size: number): DownloadRange | null | false {
   if (value === null) return null;
 
   const match = /^bytes=(\d*)-(\d*)$/.exec(value.trim());
@@ -239,6 +248,23 @@ function metadataContentType(key: string): string {
   return "application/xml; charset=utf-8";
 }
 
+function recordDownloadStart(
+  request: Request,
+  env: WorkerEnv,
+  key: string,
+  size: number,
+  range: DownloadRange | null,
+): void {
+  const point = downloadDataPoint(request, key, size, range);
+  if (point === null) return;
+
+  try {
+    env.DOWNLOAD_ANALYTICS.writeDataPoint(point);
+  } catch (error) {
+    console.error("Unable to record installer download analytics.", error);
+  }
+}
+
 async function serveInstaller(request: Request, env: WorkerEnv, key: string): Promise<Response> {
   if (request.method !== "GET" && request.method !== "HEAD") {
     return new Response("Method Not Allowed", {
@@ -287,6 +313,8 @@ async function serveInstaller(request: Request, env: WorkerEnv, key: string): Pr
       `bytes ${range.offset}-${range.offset + range.length - 1}/${object.size}`,
     );
   }
+
+  recordDownloadStart(request, env, key, metadata.size, range);
 
   return new Response(object.body, {
     status: range === null ? 200 : 206,
@@ -409,6 +437,69 @@ async function listUpdateFeedRuns(env: WorkerEnv): Promise<Response> {
     title: run.display_title,
   }));
   return jsonResponse({ runs });
+}
+
+async function downloadAnalytics(env: WorkerEnv, url: URL): Promise<Response> {
+  const daysValue = Number(url.searchParams.get("days") ?? "30");
+  const days = daysValue === 1 || daysValue === 7 || daysValue === 30 || daysValue === 90
+    ? daysValue
+    : 30;
+  const start = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
+
+  try {
+    const result = await env.ANALYTICS_SQL.query<DownloadAnalyticsRow>({
+      query: `
+        SELECT
+          index1 AS release,
+          blob1 AS platform,
+          blob2 AS version,
+          blob3 AS build,
+          COUNT(*) AS starts,
+          SUM(double2) AS bytesServed
+        FROM events.analyticsEngine.skynet_downloads
+        WHERE timestamp >= $start
+          AND blob4 IN ('full', 'range_start')
+          AND blob5 = 'public'
+        GROUP BY release, platform, version, build
+        ORDER BY starts DESC
+        LIMIT 100
+      `,
+      params: { start },
+    });
+
+    const platforms: Record<DownloadPlatform, number> = {
+      windows: 0,
+      macos: 0,
+      linux: 0,
+      portable: 0,
+    };
+    const releases = result.data.map((row) => {
+      const starts = Number(row.starts);
+      const bytesServed = Number(row.bytesServed);
+      if (row.platform in platforms && Number.isFinite(starts)) {
+        platforms[row.platform] += starts;
+      }
+      return {
+        release: row.release,
+        platform: row.platform,
+        version: row.version,
+        build: row.build,
+        starts: Number.isFinite(starts) ? starts : 0,
+        bytesServed: Number.isFinite(bytesServed) ? bytesServed : 0,
+      };
+    });
+
+    return jsonResponse({
+      days,
+      start,
+      totalStarts: Object.values(platforms).reduce((total, count) => total + count, 0),
+      platforms,
+      releases,
+    });
+  } catch (error) {
+    console.error("Unable to query installer download analytics.", error);
+    return errorResponse("Download analytics are temporarily unavailable.", 503);
+  }
 }
 
 async function uploadInstaller(
@@ -535,9 +626,11 @@ async function publishPackages(request: Request, env: WorkerEnv): Promise<Respon
   return jsonResponse({ release: manifest }, 201);
 }
 
-async function handleAdminApi(request: Request, env: WorkerEnv, pathname: string): Promise<Response> {
+async function handleAdminApi(request: Request, env: WorkerEnv, url: URL): Promise<Response> {
   const authenticationFailure = await authenticateAdmin(request, env);
   if (authenticationFailure !== null) return authenticationFailure;
+
+  const pathname = url.pathname;
 
   if (pathname === `${ADMIN_API_PREFIX}session` && request.method === "GET") {
     return jsonResponse({ authenticated: true });
@@ -559,6 +652,10 @@ async function handleAdminApi(request: Request, env: WorkerEnv, pathname: string
     return listUpdateFeedRuns(env);
   }
 
+  if (pathname === `${ADMIN_API_PREFIX}analytics/downloads` && request.method === "GET") {
+    return downloadAnalytics(env, url);
+  }
+
   return new Response("Not Found", { status: 404 });
 }
 
@@ -568,7 +665,7 @@ export default {
     const url = new URL(request.url);
 
     if (url.pathname.startsWith(ADMIN_API_PREFIX)) {
-      return handleAdminApi(request, workerEnv, url.pathname);
+      return handleAdminApi(request, workerEnv, url);
     }
 
     if (url.pathname.startsWith("/downloads/") || url.pathname.startsWith("/updates/")) {
